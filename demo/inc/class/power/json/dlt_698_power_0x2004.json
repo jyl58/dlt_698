@@ -1,0 +1,22 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "4",
+            "type": "oop_double_long",
+            "var": "valid_power"
+        },
+        {
+            "num": "1",
+            "type": "oop_scaler_unit",
+            "var": "su_std"
+        }
+    ],
+    "class": "power",
+    "note": "",
+    "oi": "0x2004"
+}

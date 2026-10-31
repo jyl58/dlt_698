@@ -1,0 +1,17 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "1",
+            "type": "oop_unsigned",
+            "var": "demand_period"
+        }
+    ],
+    "class": "param",
+    "note": "最大需量周期",
+    "oi": "0x4100"
+}

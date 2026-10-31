@@ -1,0 +1,32 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "energy_std"
+        },
+        {
+            "num": "1",
+            "type": "oop_scaler_unit",
+            "var": "su_std"
+        },
+        {
+            "num": "5",
+            "type": "oop_long64_unsigned",
+            "var": "energy_hig"
+        },
+        {
+            "num": "1",
+            "type": "oop_scaler_unit",
+            "var": "su_hig"
+        }
+    ],
+    "class": "energy",
+    "note": "电能量",
+    "oi": "0x0000"
+}

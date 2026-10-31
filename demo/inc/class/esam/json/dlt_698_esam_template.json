@@ -1,0 +1,110 @@
+{
+    "oi": "0x4000",
+    "class": "esam",
+    "att": [
+        {
+            "var": "logic_name",
+            "type": "octet_string",
+            "num": "8"
+        },
+        {
+            "var": "seri_num",
+            "type": "octet_string",
+            "num": "32"
+        },
+        {
+            "var": "esam_version",
+            "type": "octet_string",
+            "num": "12"
+        },
+        {
+            "var": "key_version",
+            "type": "octet_string",
+            "num": "12"
+        },
+        {
+            "var": "talk_time_thr",
+            "type": "double_long_unsigned",
+            "num": "1"
+        },
+        {
+            "var": "talk_time_remain",
+            "type": "double_long_unsigned",
+            "num": "1"
+        },
+        {
+            "var": "counter",
+            "type": "struct",
+            "content": [
+                    {
+                        "var": "app_counter",
+                        "type": "double_long_unsigned",
+                        "num": "1"
+                    },
+                    {
+                        "var": "report_counter",
+                        "type": "double_long_unsigned",
+                        "num": "1"
+                    },
+                    {
+                        "var": "talk_num",
+                        "type": "double_long_unsigned",
+                        "num": "1"
+                    }                    
+            ],
+            "num": "1"
+        },
+        {
+            "var": "certificate",
+            "type": "struct",
+            "content": [
+                    {
+                        "var": "terminal_version",
+                        "type": "octet_string",
+                        "num": "15"
+                    },
+                    {
+                        "var": "primary_station_version",
+                        "type": "octet_string",
+                        "num": "18"
+                    }                
+            ],
+            "num": "1"
+        },
+        {
+            "var": "terminal_certificate_num",
+            "type": "octet_string",
+            "num": "20"
+        },
+        {
+            "var": "terminal_certificate",
+            "type": "octet_string",
+            "num": "16"
+        },
+        {
+            "var": "primary_station_num",
+            "type": "octet_string",
+            "num": "23"
+        },
+        {
+            "var": "primary_station_certificate",
+            "type": "octet_string",
+            "num": "5"
+        },
+        {
+            "var": "esam_object",
+            "type": "double_long_unsigned",
+            "num": "18"
+        },
+        {
+            "var": "infrared_time_thr",
+            "type": "double_long_unsigned",
+            "num": "1"
+        },
+        {
+            "var": "infrared_time_remain",
+            "type": "double_long_unsigned",
+            "num": "1"
+        }
+    ]
+}

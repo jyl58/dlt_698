@@ -1,0 +1,78 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "content": [
+                {
+                    "content": [
+                        {
+                            "num": "1",
+                            "type": "oop_enum",
+                            "var": "dir"
+                        },
+                        {
+                            "num": "1",
+                            "type": "oop_unsigned",
+                            "var": "degree"
+                        },
+                        {
+                            "num": "1",
+                            "type": "oop_unsigned",
+                            "var": "minute"
+                        },
+                        {
+                            "num": "1",
+                            "type": "oop_unsigned",
+                            "var": "second"
+                        }
+                    ],
+                    "num": "1",
+                    "type": "oop_struct",
+                    "var": "longitude"
+                },
+                {
+                    "content": [
+                        {
+                            "num": "1",
+                            "type": "oop_enum",
+                            "var": "dir"
+                        },
+                        {
+                            "num": "1",
+                            "type": "oop_unsigned",
+                            "var": "degree"
+                        },
+                        {
+                            "num": "1",
+                            "type": "oop_unsigned",
+                            "var": "minute"
+                        },
+                        {
+                            "num": "1",
+                            "type": "oop_unsigned",
+                            "var": "second"
+                        }
+                    ],
+                    "num": "1",
+                    "type": "oop_struct",
+                    "var": "latitude"
+                },
+                {
+                    "num": "1",
+                    "type": "oop_double_long_unsigned",
+                    "var": "height"
+                }
+            ],
+            "num": "1",
+            "type": "oop_struct",
+            "var": "coordinate"
+        }
+    ],
+    "class": "param",
+    "note": "设备地理坐标",
+    "oi": "0x4004"
+}

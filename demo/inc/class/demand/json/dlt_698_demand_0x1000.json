@@ -1,0 +1,34 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "content": [
+                {
+                    "num": "1",
+                    "type": "oop_double_long_unsigned",
+                    "var": "energy"
+                },
+                {
+                    "num": "1",
+                    "type": "oop_date_time_s",
+                    "var": "time"
+                }
+            ],
+            "num": "5",
+            "type": "oop_struct",
+            "var": "demand"
+        },
+        {
+            "num": "1",
+            "type": "oop_scaler_unit",
+            "var": "su_std"
+        }
+    ],
+    "class": "demand",
+    "note": "最大需量",
+    "oi": "0x1000"
+}

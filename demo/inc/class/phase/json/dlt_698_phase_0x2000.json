@@ -1,0 +1,27 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "3",
+            "type": "oop_long_unsigned",
+            "var": "voltage"
+        },
+        {
+            "num": "1",
+            "type": "oop_scaler_unit",
+            "var": "su_std"
+        },
+        {
+            "num": "1",
+            "type": "oop_double_long_unsigned",
+            "var": "hig_voltage"
+        }
+    ],
+    "class": "phase",
+    "note": "分项变量类",
+    "oi": "0x2000"
+}

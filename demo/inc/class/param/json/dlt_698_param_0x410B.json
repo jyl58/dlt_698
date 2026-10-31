@@ -1,0 +1,17 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "32",
+            "type": "oop_visible_string",
+            "var": "meter_type"
+        }
+    ],
+    "class": "param",
+    "note": "电能表型号",
+    "oi": "0x410B"
+}

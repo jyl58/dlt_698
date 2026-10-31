@@ -1,0 +1,17 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "1",
+            "type": "oop_unsigned",
+            "var": "slide_time"
+        }
+    ],
+    "class": "param",
+    "note": "滑差时间",
+    "oi": "0x4101"
+}

@@ -1,0 +1,22 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "32",
+            "type": "oop_bit_string",
+            "var": "report_tag"
+        },
+        {
+            "num": "1",
+            "type": "oop_scaler_unit",
+            "var": "su_std"
+        }
+    ],
+    "class": "var",
+    "note": "电能表跟随上报状态字",
+    "oi": "0x2015"
+}

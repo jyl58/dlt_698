@@ -1,0 +1,99 @@
+{
+    "att": [
+        {
+            "num": "32",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "32",
+            "type": "oop_octet_string",
+            "var": "seri_num"
+        },
+        {
+            "num": "32",
+            "type": "oop_octet_string",
+            "var": "esam_version"
+        },
+        {
+            "num": "32",
+            "type": "oop_octet_string",
+            "var": "key_version"
+        },
+        {
+            "num": "1",
+            "type": "oop_double_long_unsigned",
+            "var": "talk_time_thr"
+        },
+        {
+            "num": "1",
+            "type": "oop_double_long_unsigned",
+            "var": "talk_time_remain"
+        },
+        {
+            "content": [
+                {
+                    "num": "1",
+                    "type": "oop_double_long_unsigned",
+                    "var": "app_counter"
+                },
+                {
+                    "num": "1",
+                    "type": "oop_double_long_unsigned",
+                    "var": "report_counter"
+                },
+                {
+                    "num": "1",
+                    "type": "oop_double_long_unsigned",
+                    "var": "talk_num"
+                }
+            ],
+            "num": "1",
+            "type": "oop_struct",
+            "var": "counter"
+        },
+        {
+            "num": "1",
+            "type": "oop_unsigned",
+            "var": "unknow"
+        },
+        {
+            "num": "20",
+            "type": "oop_octet_string",
+            "var": "terminal_certificate_num"
+        },
+        {
+            "num": "16",
+            "type": "oop_octet_string",
+            "var": "terminal_certificate"
+        },
+        {
+            "num": "23",
+            "type": "oop_octet_string",
+            "var": "primary_station_num"
+        },
+        {
+            "num": "5",
+            "type": "oop_octet_string",
+            "var": "primary_station_certificate"
+        },
+        {
+            "num": "3",
+            "type": "oop_oad",
+            "var": "esam_object"
+        },
+        {
+            "num": "1",
+            "type": "oop_double_long_unsigned",
+            "var": "infrared_time_thr"
+        },
+        {
+            "num": "1",
+            "type": "oop_double_long_unsigned",
+            "var": "infrared_time_remain"
+        }
+    ],
+    "class": "esam",
+    "note": "ESAM接口类",
+    "oi": "F100"
+}

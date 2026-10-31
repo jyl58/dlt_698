@@ -1,0 +1,37 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "56",
+            "type": "oop_long",
+            "var": "harm_A"
+        },
+        {
+            "num": "56",
+            "type": "oop_long",
+            "var": "harm_B"
+        },
+        {
+            "num": "56",
+            "type": "oop_long",
+            "var": "harm_C"
+        },
+        {
+            "num": "1",
+            "type": "oop_unsigned",
+            "var": "max_harm"
+        },
+        {
+            "num": "1",
+            "type": "oop_scaler_unit",
+            "var": "su_std"
+        }
+    ],
+    "class": "harmonic",
+    "note": "谐波变量类",
+    "oi": "0x200d"
+}

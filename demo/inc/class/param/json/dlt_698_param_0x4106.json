@@ -1,0 +1,27 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "6",
+            "type": "oop_visible_string",
+            "var": "max_current"
+        },
+        {
+            "num": "32",
+            "type": "oop_visible_string",
+            "var": "min_current"
+        },
+        {
+            "num": "32",
+            "type": "oop_visible_string",
+            "var": "breakover_current"
+        }
+    ],
+    "class": "param",
+    "note": "计量规格",
+    "oi": "0x4106"
+}

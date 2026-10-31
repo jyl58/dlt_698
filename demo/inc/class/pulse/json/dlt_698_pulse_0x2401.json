@@ -1,0 +1,126 @@
+{
+    "att": [
+        {
+            "num": "64",
+            "type": "oop_octet_string",
+            "var": "logic_name"
+        },
+        {
+            "num": "6",
+            "type": "oop_octet_string",
+            "var": "addrs"
+        },
+        {
+            "content": [
+                {
+                    "num": "1",
+                    "type": "oop_long_unsigned",
+                    "var": "pt"
+                },
+                {
+                    "num": "1",
+                    "type": "oop_long_unsigned",
+                    "var": "ct"
+                }
+            ],
+            "num": "1",
+            "type": "oop_struct",
+            "var": "ratio"
+        },
+        {
+            "content": [
+                {
+                    "num": "1",
+                    "type": "oop_oad",
+                    "var": "oad"
+                },
+                {
+                    "num": "1",
+                    "type": "oop_enum",
+                    "var": "att"
+                },
+                {
+                    "num": "1",
+                    "type": "oop_long_unsigned",
+                    "var": "constant"
+                }
+            ],
+            "num": "2",
+            "type": "oop_struct",
+            "var": "pluse_cfg"
+        },
+        {
+            "num": "1",
+            "type": "oop_double_long",
+            "var": "valid_power"
+        },
+        {
+            "num": "1",
+            "type": "oop_double_long",
+            "var": "invalid_power"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "current_day_pos_valid"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "current_month_pos_valid"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "current_day_neg_valid"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "current_month_neg_valid"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "current_day_pos_invalid"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "current_month_pos_invalid"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "current_day_neg_invalid"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "current_month_neg_invalid"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "pos_valid_show"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "pos_invalid_show"
+        },
+        {
+            "num": "5",
+            "type": "oop_double_long_unsigned",
+            "var": "neg_valid_show"
+        },
+        {
+            "num": "14",
+            "type": "oop_scaler_unit",
+            "var": "su_std"
+        }
+    ],
+    "class": "pulse",
+    "note": "脉冲计量类",
+    "oi": "0x2401"
+}
