@@ -28,10 +28,10 @@ static const dlt_698_data_handle dlt_698_data_handle_tb[] = {
     dlt_698_parse_enum,                    //[22] //enum==u8枚举的元素在对象属性或方法的描述中定义，确定的值，无需跟长度
     dlt_698_parse_float32,                 //[23]32位浮点数，确定的值，无需跟长度
     dlt_698_parse_float64,                 //[24]64位浮点数，确定的值，无需跟长度
-    dlt_698_parse_date_time,               //[25]date_time    25    octet-string（SIZE（10）），确定的值，无需跟长度
-    dlt_698_parse_date,                    //[26]date    26    octet-string（SIZE（5）），确定的值，无需跟长度
-    dlt_698_parse_time,                    //[27]time    27    octet-string（SIZE（3）），确定的值，无需跟长度
-    dlt_698_parse_date_time_s,             //[28]date_time_s    28    octet-string（SIZE（7）），确定的值，无需跟长度
+    dlt_698_parse_date_time,               //[25]date_time	25	octet-string（SIZE（10）），确定的值，无需跟长度
+    dlt_698_parse_date,                    //[26]date	26	octet-string（SIZE（5）），确定的值，无需跟长度
+    dlt_698_parse_time,                    //[27]time	27	octet-string（SIZE（3）），确定的值，无需跟长度
+    dlt_698_parse_date_time_s,             //[28]date_time_s	28	octet-string（SIZE（7）），确定的值，无需跟长度
     NULL,                                  //[29]--[79]保留
     NULL,
     NULL,
@@ -830,14 +830,14 @@ int16_t dlt_698_parse_csd(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_
 /**
  * MS∷=CHOICE
  * {
- *  无表计                [0]，
- *  全部用户地址          [1]，
- *  一组用户类型          [2] SEQUENCE OF unsigned，
- *  一组用户地址          [3] SEQUENCE OF TSA，
- *  一组配置序号          [4] SEQUENCE OF long-unsigned，
- *  一组用户类型区间    [5] SEQUENCE OF Region，
- *  一组用户地址区间    [6] SEQUENCE OF Region，
- *  一组配置序号区间    [7] SEQUENCE OF Region
+ *  无表计		        [0]，
+ *  全部用户地址  	    [1]，
+ *  一组用户类型  	    [2] SEQUENCE OF unsigned，
+ *  一组用户地址  	    [3] SEQUENCE OF TSA，
+ *  一组配置序号  	    [4] SEQUENCE OF long-unsigned，
+ *  一组用户类型区间	[5] SEQUENCE OF Region，
+ *  一组用户地址区间	[6] SEQUENCE OF Region，
+ *  一组配置序号区间	[7] SEQUENCE OF Region
  * }
  */
 int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_ptr)
@@ -850,7 +850,7 @@ int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
     {
         case 0:    // 无表计[0]，
             break;
-        case 1:    // 全部用户地址      [1]，
+        case 1:    // 全部用户地址  	[1]，
             break;
         case 2:    // SEQUENCE OF unsigned
         {
