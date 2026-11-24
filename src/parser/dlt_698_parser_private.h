@@ -3,6 +3,8 @@
 #include "dlt_698_type.h"
 #include "dlt_698_parser.h"
 #include "dlt_698_data.h"
+#include <stddef.h>
+#include <string.h>
 
 #include "dlt_698_parser_get.h"
 #include "dlt_698_parser_set.h"
@@ -17,7 +19,13 @@
 extern "C"
 {
 #endif
-#pragma pack(1)
+/*
+ * 注意：DLT_698_PRIVATE 是解析器的内部运行状态，不与线上报文布局对应，因此刻意不使用
+ * #pragma pack(1)。若按 1 字节对齐，frame.time_tag / frame.follow_report 等指针成员会落在
+ * 非自然对齐的偏移上；这些成员的地址会被交给子解析函数（如 dlt_698_parse_TimeTag），
+ * 形成非对齐指针，在 x86 上是 UBSan 报错的未定义行为，在 Cortex-M0 等严格对齐内核上会
+ * 直接触发 UsageFault/HardFault。结构体之后的编译期断言守卫这一点。
+ */
     /*698数据帧解析步骤状态机*/
     enum DLT_698_STEP
     {
@@ -156,6 +164,16 @@ extern "C"
         dlt_698_mem_manage_t _mem;
     };
 
+#ifndef __cplusplus
+    /* 编译期守卫：内部状态的 64 位与指针成员必须保持自然对齐 */
+    _Static_assert(offsetof(struct DLT_698_PRIVATE, _tick_ms_last) % _Alignof(uint64_t) == 0,
+                   "DLT_698_PRIVATE._tick_ms_last must be naturally aligned");
+    _Static_assert(offsetof(struct DLT_698_PRIVATE, frame.time_tag) % _Alignof(dlt_698_data_t *) == 0,
+                   "DLT_698_PRIVATE.frame.time_tag must be naturally aligned");
+    _Static_assert(offsetof(struct DLT_698_PRIVATE, frame.follow_report) % _Alignof(dlt_698_follow_report_t *) == 0,
+                   "DLT_698_PRIVATE.frame.follow_report must be naturally aligned");
+#endif
+
     /* 返回载荷中尚未解析的字节数，索引越界时返回0 */
     static inline uint16_t dlt_698_payld_remain(const struct DLT_698_PRIVATE *ins_ptr)
     {
@@ -191,13 +209,14 @@ extern "C"
         {
             return DLT_698_ERR_OVER;
         }
-        *value_out = (uint16_t)((ins_ptr->_payld_ptr[ins_ptr->_payld_index] << 8) | ins_ptr->_payld_ptr[ins_ptr->_payld_index + 1]);
+        uint16_t value = (uint16_t)((ins_ptr->_payld_ptr[ins_ptr->_payld_index] << 8) | ins_ptr->_payld_ptr[ins_ptr->_payld_index + 1]);
+        // 目标可能是 packed 结构体里的成员，地址不保证对齐，用 memcpy 按字节写入
+        memcpy(value_out, &value, sizeof(value));
         ins_ptr->_payld_index += 2;
         return DLT_698_ERR_NONE;
     }
     int16_t dlt_698_parse_entry(dlt_698_parser *parser);
 
-#pragma pack()
 #ifdef __cplusplus
 }
 #endif

@@ -2,28 +2,40 @@
 #define DLT_698_PARSER_WIDGET_H_
 #include "dlt_698_type.h"
 #include "dlt_698_parser_private.h"
+#include <string.h>
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 #pragma pack(1)
 
-// 获取node最有一个节点的next地址
+/*
+ * 把新节点挂到单向链表尾部。
+ * @param type 节点类型
+ * @param buf  内存池起始地址
+ * @param list 指向链表头指针成员的指针（该成员通常位于 #pragma pack(1) 的结构体中）
+ * @param index 新节点相对 buf 的字节偏移
+ * @note 链表头成员在 packed 结构体内部，直接通过 T ** 读写会形成非对齐指针访问
+ *       （x86 上 UBSan 报 store to misaligned address，严格对齐内核上会 Fault），
+ *       因此这里统一用 memcpy 按字节搬运，避免对成员施加对齐要求。
+ */
 #define DLT_698_append_next(type, buf, list, index)                                                                                                                                                    \
     {                                                                                                                                                                                                  \
         type *node = (type *)(buf + index);                                                                                                                                                            \
-        if (*list == NULL)                                                                                                                                                                             \
+        type *head = NULL;                                                                                                                                                                             \
+        memcpy(&head, (list), sizeof(head));                                                                                                                                                           \
+        if (head == NULL)                                                                                                                                                                              \
         {                                                                                                                                                                                              \
-            *list = node;                                                                                                                                                                              \
+            memcpy((list), &node, sizeof(node));                                                                                                                                                       \
         }                                                                                                                                                                                              \
         else                                                                                                                                                                                           \
         {                                                                                                                                                                                              \
-            type *node = *list;                                                                                                                                                                        \
-            while (node->next_index != 0)                                                                                                                                                              \
+            type *iter = head;                                                                                                                                                                         \
+            while (iter->next_index != 0)                                                                                                                                                              \
             {                                                                                                                                                                                          \
-                node = (type *)(buf + node->next_index);                                                                                                                                               \
+                iter = (type *)(buf + iter->next_index);                                                                                                                                               \
             }                                                                                                                                                                                          \
-            node->next_index = index;                                                                                                                                                                  \
+            iter->next_index = index;                                                                                                                                                                  \
         }                                                                                                                                                                                              \
     }
 
