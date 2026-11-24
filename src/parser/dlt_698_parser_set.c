@@ -14,6 +14,11 @@ int16_t dlt_698_parse_set_req(dlt_698_parser *parser)
 {
     struct DLT_698_PRIVATE *ins_ptr = (struct DLT_698_PRIVATE *)parser->_ins;
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_SET_REQ;    // 0x06是请求方法
+    /*帧头固定域至少需要 method + PIID 两个字节*/
+    if (dlt_698_payld_need(ins_ptr, 2) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
+    }
 
     // 获取SET处理方法
     ins_ptr->frame.method = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
@@ -45,6 +50,11 @@ int16_t dlt_698_parse_set_res(dlt_698_parser *parser)
 {
     struct DLT_698_PRIVATE *ins_ptr = (struct DLT_698_PRIVATE *)parser->_ins;
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_SET_RES;    // 0x06是请求方法
+    /*帧头固定域至少需要 method + PIID 两个字节*/
+    if (dlt_698_payld_need(ins_ptr, 2) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
+    }
     // 获取SET处理方法
     ins_ptr->frame.method = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     // 获取PIID

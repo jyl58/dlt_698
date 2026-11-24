@@ -44,6 +44,11 @@ int16_t dlt_698_parse_security_req(dlt_698_parser *parser)
         return DLT_698_ERR_EMPTY_PTR;
     }
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_SEC_REQ;
+    /*安全请求帧头至少需要 APDU类型 一个字节*/
+    if (dlt_698_payld_need(ins_ptr, 1) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t apdu_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     ins_ptr->frame.req_sec->apdu_type = apdu_type;
     int16_t ret = DLT_698_ERR_NONE;
@@ -62,6 +67,11 @@ int16_t dlt_698_parse_security_req(dlt_698_parser *parser)
         return ret;
     }
 
+    /*安全请求的验证信息类型至少需要一个字节*/
+    if (dlt_698_payld_need(ins_ptr, 1) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t verify_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     ins_ptr->frame.req_sec->verify_type = verify_type;
     if (verify_type >= (sizeof(dlt_698_sec_req_fun_table)) / (sizeof(dlt_698_sec_req_fun_table[0])))
@@ -113,6 +123,11 @@ int16_t dlt_698_parse_security_res(dlt_698_parser *parser)
         return DLT_698_ERR_EMPTY_PTR;
     }
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_SEC_RES;
+    /*安全响应帧头至少需要 APDU类型 一个字节*/
+    if (dlt_698_payld_need(ins_ptr, 1) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t apdu_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     ins_ptr->frame.res_sec->apdu_type = apdu_type;
     int16_t ret = DLT_698_ERR_NONE;
@@ -123,6 +138,11 @@ int16_t dlt_698_parse_security_res(dlt_698_parser *parser)
             ret = dlt_698_parse_octet_string(ins_ptr, &ins_ptr->frame.res_sec->apdu.apdu_data);
             break;
         case 2:    ///< [2]错误码
+            /*错误码 DAR 至少需要一个字节*/
+            if (dlt_698_payld_need(ins_ptr, 1) != DLT_698_ERR_NONE)
+            {
+                return DLT_698_ERR_OVER;
+            }
             ins_ptr->frame.res_sec->apdu.dar = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
             break;
         default:
@@ -132,6 +152,11 @@ int16_t dlt_698_parse_security_res(dlt_698_parser *parser)
     if (ret != DLT_698_ERR_NONE)
     {
         return ret;
+    }
+    /*验证信息可选标志至少需要一个字节*/
+    if (dlt_698_payld_need(ins_ptr, 1) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
     }
     uint8_t verify_optional = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     if (verify_optional == 0)    ///< 无数据验证信息
@@ -144,6 +169,11 @@ int16_t dlt_698_parse_security_res(dlt_698_parser *parser)
         if (ins_ptr->frame.res_sec->verify_ptr == NULL)
         {
             return DLT_698_ERR_EMPTY_PTR;
+        }
+        /*验证信息类型至少需要一个字节*/
+        if (dlt_698_payld_need(ins_ptr, 1) != DLT_698_ERR_NONE)
+        {
+            return DLT_698_ERR_OVER;
         }
         uint8_t verify_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
         ins_ptr->frame.res_sec->verify_ptr->verify_type = verify_type;

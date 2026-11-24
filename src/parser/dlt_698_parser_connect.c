@@ -1,5 +1,9 @@
 #include "dlt_698_parser_connect.h"
 #include "dlt_698_parser_widget.h"
+/*CONNECT-Request 固定域长度：PIID(1)+协议版本号(2)+协议一致性块(8)+功能一致性块(16)+发送/接收/窗口/处理尺寸(2+2+1+2)+超时时间(4)+认证对象选择(1)*/
+#define DLT_698_CONN_REQ_HEAD_LEN 39U
+/*CONNECT-Response 固定域长度：PIID(1)+厂商版本信息(32)+协商版本号(2)+一致性块(8+16)+发送/接收/窗口/处理尺寸(2+2+1+2)+超时时间(4)+认证结果(1)+认证对象选择(1)*/
+#define DLT_698_CONN_RES_HEAD_LEN 72U
 
 int16_t dlt_698_parse_conn_req(dlt_698_parser *parser)
 {
@@ -12,6 +16,11 @@ int16_t dlt_698_parse_conn_req(dlt_698_parser *parser)
     uint8_t *data_ptr = ins_ptr->_payld_ptr;
     uint16_t pos = ins_ptr->_payld_index;
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_CONN_REQ;
+    /*帧头固定域不足时直接判错，避免读到载荷之外的残留数据*/
+    if (dlt_698_payld_need(ins_ptr, DLT_698_CONN_REQ_HEAD_LEN) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->frame.piid = data_ptr[pos++];
     struct DLT_698_CONN_REQ *conn_ptr = ins_ptr->frame.content.req_conn;
     ///< 期望的协议版本号
@@ -92,6 +101,11 @@ int16_t dlt_698_parse_conn_res(dlt_698_parser *parser)
     uint8_t *data_ptr = ins_ptr->_payld_ptr;
     uint16_t pos = ins_ptr->_payld_index;
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_CONN_RES;
+    /*帧头固定域不足时直接判错，避免读到载荷之外的残留数据*/
+    if (dlt_698_payld_need(ins_ptr, DLT_698_CONN_RES_HEAD_LEN) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->frame.piid = data_ptr[pos++];
     struct DLT_698_CONN_RES *conn_ptr = ins_ptr->frame.content.res_conn;
     ///< 服务器厂商版本信息-厂商代码
@@ -228,6 +242,10 @@ int16_t dlt_698_parse_rel_req(dlt_698_parser *parser)
 {
     struct DLT_698_PRIVATE *ins_ptr = (struct DLT_698_PRIVATE *)parser->_ins;
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_REL_REQ;
+    if (dlt_698_payld_need(ins_ptr, 1) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->frame.piid = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     int16_t ret = dlt_698_parse_TimeTag(ins_ptr, &ins_ptr->frame.time_tag);
 
@@ -243,6 +261,11 @@ int16_t dlt_698_parse_rel_res(dlt_698_parser *parser)
         return DLT_698_ERR_EMPTY_PTR;
     }
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_REL_RES;
+    /*帧头固定域：PIID(1)+执行结果(1)*/
+    if (dlt_698_payld_need(ins_ptr, 2) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->frame.piid = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     ins_ptr->frame.content.res_rel->result = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     return DLT_698_ERR_NONE;
@@ -256,8 +279,15 @@ int16_t dlt_698_parse_rel_ntf(dlt_698_parser *parser)
         return DLT_698_ERR_EMPTY_PTR;
     }
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_REL_NTY;
+    if (dlt_698_payld_need(ins_ptr, 1) != DLT_698_ERR_NONE)
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->frame.piid = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
-    dlt_698_parse_date_time_s(ins_ptr, &ins_ptr->frame.content.rel_nty->link_dt);
-    dlt_698_parse_date_time_s(ins_ptr, &ins_ptr->frame.content.rel_nty->cur_dt);
-    return DLT_698_ERR_NONE;
+    int16_t ret = dlt_698_parse_date_time_s(ins_ptr, &ins_ptr->frame.content.rel_nty->link_dt);
+    if (ret == DLT_698_ERR_NONE)
+    {
+        ret = dlt_698_parse_date_time_s(ins_ptr, &ins_ptr->frame.content.rel_nty->cur_dt);
+    }
+    return ret;
 }

@@ -165,6 +165,15 @@ extern "C"
         }
         return (uint16_t)(ins_ptr->_payld_len - ins_ptr->_payld_index);
     }
+    /* 检查载荷剩余字节是否足够，不足时返回 DLT_698_ERR_OVER */
+    static inline int16_t dlt_698_payld_need(const struct DLT_698_PRIVATE *ins_ptr, uint16_t bytes)
+    {
+        if (dlt_698_payld_remain(ins_ptr) < bytes)
+        {
+            return DLT_698_ERR_OVER;
+        }
+        return DLT_698_ERR_NONE;
+    }
     int16_t dlt_698_parse_entry(dlt_698_parser *parser);
 
 #pragma pack()

@@ -261,6 +261,11 @@ int16_t dlt_698_parse(dlt_698_parser *parser, uint8_t c)
             {
                 // 载荷数据处理函数
                 ret = dlt_698_handle_payload_private(parser);
+                /*解析器消费的字节数超过载荷长度，说明载荷被截断，按错误帧丢弃*/
+                if ((DLT_698_ERR_NONE == ret) && (ins_ptr->_payld_index > ins_ptr->_payld_len))
+                {
+                    ret = DLT_698_ERR_OVER;
+                }
                 if (DLT_698_ERR_NONE == ret)
                 {    // 数据帧解析完成
                     if (NULL != parser->_fun)
