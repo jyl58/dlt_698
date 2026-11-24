@@ -217,7 +217,7 @@ int16_t dlt_698_parse_conn_res(dlt_698_parser *parser)
         }
         else
         {
-            dlt_698_parse_visible_string(ins_ptr, &conn_ptr->res_info.verify.rsa_pub_key->modulus);
+            ret = dlt_698_parse_visible_string(ins_ptr, &conn_ptr->res_info.verify.rsa_pub_key->modulus);
             if (ret == DLT_698_ERR_NONE)
             {
                 ret = dlt_698_parse_octet_string(ins_ptr, &conn_ptr->res_info.verify.rsa_pub_key->key);

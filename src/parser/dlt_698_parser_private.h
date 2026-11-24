@@ -174,6 +174,27 @@ extern "C"
         }
         return DLT_698_ERR_NONE;
     }
+    /* 从载荷中读取一个字节，载荷不足时返回 DLT_698_ERR_OVER */
+    static inline int16_t dlt_698_payld_read_u8(struct DLT_698_PRIVATE *ins_ptr, uint8_t *value_out)
+    {
+        if (dlt_698_payld_remain(ins_ptr) < 1)
+        {
+            return DLT_698_ERR_OVER;
+        }
+        *value_out = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
+        return DLT_698_ERR_NONE;
+    }
+    /* 从载荷中读取两个字节（大端），载荷不足时返回 DLT_698_ERR_OVER */
+    static inline int16_t dlt_698_payld_read_u16(struct DLT_698_PRIVATE *ins_ptr, uint16_t *value_out)
+    {
+        if (dlt_698_payld_remain(ins_ptr) < 2)
+        {
+            return DLT_698_ERR_OVER;
+        }
+        *value_out = (uint16_t)((ins_ptr->_payld_ptr[ins_ptr->_payld_index] << 8) | ins_ptr->_payld_ptr[ins_ptr->_payld_index + 1]);
+        ins_ptr->_payld_index += 2;
+        return DLT_698_ERR_NONE;
+    }
     int16_t dlt_698_parse_entry(dlt_698_parser *parser);
 
 #pragma pack()

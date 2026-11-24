@@ -50,7 +50,12 @@ int16_t dlt_698_parse_get_req_record_list(dlt_698_parser *parser)
     {
         return DLT_698_ERR_EMPTY_PTR;
     }
-    uint8_t req_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
+    uint8_t req_cnt = 0;
+    int16_t ret = dlt_698_payld_read_u8(ins_ptr, &req_cnt);
+    if (ret != DLT_698_ERR_NONE)
+    {
+        return ret;
+    }
     ins_ptr->frame.content.req_record->rec_ptr = NULL;
     struct DLT_698_GET_RECORD **node_father = &ins_ptr->frame.content.req_record->rec_ptr;
     for (int i = 0; i < req_cnt; i++)
@@ -63,7 +68,7 @@ int16_t dlt_698_parse_get_req_record_list(dlt_698_parser *parser)
             return DLT_698_ERR_EMPTY_PTR;
         }
         DLT_698_append_next(struct DLT_698_GET_RECORD, ins_ptr->_mem.start, node_father, next_index);
-        int16_t ret = dlt_698_parse_get_req_record_result(ins_ptr, node_ptr);
+        ret = dlt_698_parse_get_req_record_result(ins_ptr, node_ptr);
         if (ret != DLT_698_ERR_NONE)
         {
             return ret;
@@ -99,7 +104,12 @@ int16_t dlt_698_parse_get_res_record_list(dlt_698_parser *parser)
         return DLT_698_ERR_EMPTY_PTR;
     }
     // List记录数据回复有多个数据单元
-    uint8_t rec_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
+    uint8_t rec_cnt = 0;
+    int16_t ret = dlt_698_payld_read_u8(ins_ptr, &rec_cnt);
+    if (ret != DLT_698_ERR_NONE)
+    {
+        return ret;
+    }
     ins_ptr->frame.content.res_record->rec_ptr = NULL;
     struct DLT_698_RESULT_RECORD **node_father = &ins_ptr->frame.content.res_record->rec_ptr;
     // 循环解析多个记录回复数据单元
@@ -113,7 +123,11 @@ int16_t dlt_698_parse_get_res_record_list(dlt_698_parser *parser)
             return DLT_698_ERR_EMPTY_PTR;
         }
         DLT_698_append_next(struct DLT_698_RESULT_RECORD, ins_ptr->_mem.start, node_father, next_index);
-        dlt_698_parse_get_res_record_result(ins_ptr, node_ptr);
+        ret = dlt_698_parse_get_res_record_result(ins_ptr, node_ptr);
+        if (ret != DLT_698_ERR_NONE)
+        {
+            return ret;
+        }
     }
     return DLT_698_ERR_NONE;
 }

@@ -27,7 +27,12 @@ int16_t dlt_698_parse_get_req_normal_list(dlt_698_parser *parser)
         return DLT_698_ERR_EMPTY_PTR;
     }
     // 获取到OAD个数
-    int oad_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
+    uint8_t oad_cnt = 0;
+    int16_t ret = dlt_698_payld_read_u8(ins_ptr, &oad_cnt);
+    if (ret != DLT_698_ERR_NONE)
+    {
+        return ret;
+    }
     ins_ptr->frame.content.req_normal->oad_ptr = NULL;
     dlt_698_data_t **node_father = &ins_ptr->frame.content.req_normal->oad_ptr;
     for (int i = 0; i < oad_cnt; i++)
@@ -39,7 +44,7 @@ int16_t dlt_698_parse_get_req_normal_list(dlt_698_parser *parser)
             return DLT_698_ERR_EMPTY_PTR;
         }
         DLT_698_append_next(dlt_698_data_t, ins_ptr->_mem.start, node_father, next_index);
-        int16_t ret = dlt_698_parse_oad(ins_ptr, unit_ptr);
+        ret = dlt_698_parse_oad(ins_ptr, unit_ptr);
         if (ret != DLT_698_ERR_NONE)
         {
             return ret;
@@ -72,7 +77,12 @@ int16_t dlt_698_parse_get_res_normal_list(dlt_698_parser *parser)
     {
         return DLT_698_ERR_EMPTY_PTR;
     }
-    int res_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
+    uint8_t res_cnt = 0;
+    int16_t ret = dlt_698_payld_read_u8(ins_ptr, &res_cnt);
+    if (ret != DLT_698_ERR_NONE)
+    {
+        return ret;
+    }
     ins_ptr->frame.content.res_normal->normal_ptr = NULL;
     struct DLT_698_Result_Normal **node_father = &ins_ptr->frame.content.res_normal->normal_ptr;
     // 循环解析每一个数据块信息
@@ -85,7 +95,7 @@ int16_t dlt_698_parse_get_res_normal_list(dlt_698_parser *parser)
             return DLT_698_ERR_EMPTY_PTR;
         }
         DLT_698_append_next(struct DLT_698_Result_Normal, ins_ptr->_mem.start, node_father, next_index);
-        int16_t ret = dlt_698_parse_result_normal(ins_ptr, node_ptr);
+        ret = dlt_698_parse_result_normal(ins_ptr, node_ptr);
         if (ret != DLT_698_ERR_NONE)
         {
             return ret;
