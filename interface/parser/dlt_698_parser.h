@@ -152,16 +152,22 @@ bit3=1，表示此帧链路用户数据加扰码，发送时链路用户数据�
     const char *dlt_698_parser_version();
     /**
      * @brief 创建并初始化698解析器实例
-     * @details 初始化解析器
+     * @details 初始化解析器。实例池固定为 DLT_698_PARSER_MAX_COUNT(4) 个，用完即
+     *          init 失败；同一个 parser 重复 init 会复用其已占用的池槽位，不会重复占用，
+     *          并且解析中间状态被复位（已收到的半帧被丢弃）。
      * @param parser 698解析器实例指针
-     * @return <O时见enum FDLT_698_ERR
+     * @return DLT_698_ERR_NONE 成功；
+     *         DLT_698_ERR_EMPTY_PTR(-3) parser 为空或 buff_size 为 0；
+     *         DLT_698_ERR_CREAT(-2) 实例池已满
      */
     int16_t dlt_698_parser_init(dlt_698_parser *parser, dlt_698_addr_t addr, uint8_t *buff, uint16_t buff_size, dlt_698_cb cb);
     /**
      * @brief 释放698解析器实例
-     * @details 释放资源
+     * @details 归还实例池槽位，之后该 parser 上的 parse/parse_frame/set_timeout_ms
+     *          都返回 DLT_698_ERR_EMPTY_PTR(-3)。可重复调用。
      * @param parser 698解析器实例指针
-     * @return <O时见enum FDLT_698_ERR
+     * @return DLT_698_ERR_NONE 成功；
+     *         DLT_698_ERR_EMPTY_PTR(-3) parser 为空、未初始化或已释放
      */
     int16_t dlt_698_parser_delete(dlt_698_parser *parser);
     /**
@@ -185,7 +191,10 @@ bit3=1，表示此帧链路用户数据加扰码，发送时链路用户数据�
      * @details 按字节解析数据
      * @param parser 解析器
      * @param c 单字节数据
-     * @return <O时见enum FDLT_698_ERR
+     * @return DLT_698_ERR_PARSING(-1) 帧未收完(正常中间态)；
+     *         DLT_698_ERR_NONE(0) 收完一帧并解析成功(已回调)；
+     *         其余负值为错误帧(见 enum FDLT_698_ERR)；
+     *         DLT_698_ERR_EMPTY_PTR(-3) 解析器未初始化或已释放
      */
     int16_t dlt_698_parse(dlt_698_parser *parser, uint8_t c);
     /**
@@ -204,8 +213,9 @@ bit3=1，表示此帧链路用户数据加扰码，发送时链路用户数据�
      * @brief 接收数据之间的时间阈值，超过阈值重新过滤数据
      * @details 数据过滤
      * @param parser 解析器
-     * @param time_threshold  时间阈值(单位：秒)
-     * @return <O时见enum FDLT_698_ERR
+     * @param ms 时间阈值(单位：毫秒)
+     * @return DLT_698_ERR_NONE 成功；
+     *         DLT_698_ERR_EMPTY_PTR(-3) parser 为空、未初始化或已释放
      */
     int16_t dlt_698_set_timeout_ms(dlt_698_parser *parser, uint16_t ms);
     /**
@@ -218,6 +228,7 @@ bit3=1，表示此帧链路用户数据加扰码，发送时链路用户数据�
      * @param sa_logic 逻辑地址
      * @param ca 客户机地址
      * @return DLT_698_ERR_NONE 成功；
+     *         DLT_698_ERR_EMPTY_PTR(-3) addr_info 或 sa 为空指针；
      *         DLT_698_ERR_LEN(-12) 地址为空、超过16字节，或超过15字节却要求扩展逻辑地址
      */
     int16_t dlt_698_addr_init(dlt_698_addr_t *addr_info, const char *sa, uint8_t sa_logic, uint8_t ca);

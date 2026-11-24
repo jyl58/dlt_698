@@ -12,6 +12,21 @@
 #define DLT_698_PARSER_VERSION "V1.0.0"
 static struct DLT_698_PRIVATE dlt_698_parser_private[DLT_698_PARSER_MAX_COUNT] = {0};
 
+/*把实例指针映射回静态池的槽位：只有池内地址才是本库的实例。
+ *用于识别"同一个 parser 重复 init"以及拒绝把任意指针当实例使用，
+ *避免重复初始化耗尽实例池或往非法地址写状态。*/
+static struct DLT_698_PRIVATE *dlt_698_parser_slot(const void *ins)
+{
+    for (int i = 0; i < DLT_698_PARSER_MAX_COUNT; i++)
+    {
+        if ((const void *)&dlt_698_parser_private[i] == ins)
+        {
+            return &dlt_698_parser_private[i];
+        }
+    }
+    return NULL;
+}
+
 static int16_t dlt_698_parser_init_private(dlt_698_parser *parser)
 {
     struct DLT_698_PRIVATE *ins_ptr = (struct DLT_698_PRIVATE *)parser->_ins;
@@ -20,7 +35,12 @@ static int16_t dlt_698_parser_init_private(dlt_698_parser *parser)
     ins_ptr->_tick_ms_last = dlt_sys_start_timestamp_ms();
     ;
     ins_ptr->_timeout_ms = DLT_698_TIMEOUT_MS;
+    /*复位解析中间状态：复用槽位时不能残留上一个帧的进度*/
     ins_ptr->_parse_step = DLT_698_PARSE_STEP_HEAD;
+    ins_ptr->_parse_index = 0;
+    ins_ptr->_payld_index = 0;
+    ins_ptr->_payld_len = 0;
+    ins_ptr->_parse_depth = 0;
     return DLT_698_ERR_NONE;
 }
 /*私有的解析用户数据的函数入口*/
@@ -42,16 +62,26 @@ int16_t dlt_698_parser_init(dlt_698_parser *parser, dlt_698_addr_t addr, uint8_t
     parser->_buf = buff;
     parser->_buf_size = buff_size;
     parser->_fun = cb;
-    for (int i = 0; i < DLT_698_PARSER_MAX_COUNT; i++)
+    /*同一个 parser 重复 init 时复用已经占用的槽位，否则每 init 一次就永久吃掉一个实例*/
+    struct DLT_698_PRIVATE *slot = dlt_698_parser_slot(parser->_ins);
+    if (NULL == slot)
     {
-        if (0 == dlt_698_parser_private[i]._used)
+        for (int i = 0; i < DLT_698_PARSER_MAX_COUNT; i++)
         {
-            parser->_ins = (void *)&dlt_698_parser_private[i];
-            dlt_698_parser_private[i]._used = 1;
-            return dlt_698_parser_init_private(parser);
+            if (0 == dlt_698_parser_private[i]._used)
+            {
+                slot = &dlt_698_parser_private[i];
+                break;
+            }
         }
     }
-    return DLT_698_ERR_CREAT;
+    if (NULL == slot)
+    {
+        return DLT_698_ERR_CREAT;
+    }
+    parser->_ins = (void *)slot;
+    slot->_used = 1;
+    return dlt_698_parser_init_private(parser);
 }
 int16_t dlt_698_parser_delete(dlt_698_parser *parser)
 {
@@ -60,14 +90,16 @@ int16_t dlt_698_parser_delete(dlt_698_parser *parser)
     {
         return DLT_698_ERR_EMPTY_PTR;
     }
-    struct DLT_698_PRIVATE *ins_ptr = (struct DLT_698_PRIVATE *)parser->_ins;
-    if (NULL != ins_ptr)
+    /*只释放本库实例池内的槽位，避免应用层指针异常时写非法内存；重复 delete 返回 EMPTY_PTR*/
+    struct DLT_698_PRIVATE *ins_ptr = dlt_698_parser_slot(parser->_ins);
+    if (NULL == ins_ptr)
     {
-        // 未初始化状态
-        ins_ptr->_inited = 0;
-        // 没有使用状态
-        ins_ptr->_used = 0;
+        return DLT_698_ERR_EMPTY_PTR;
     }
+    // 未初始化状态
+    ins_ptr->_inited = 0;
+    // 没有使用状态
+    ins_ptr->_used = 0;
     parser->_ins = NULL;
     return DLT_698_ERR_NONE;
 }
@@ -96,6 +128,11 @@ int16_t dlt_698_parse_frame(dlt_698_parser *parser, uint8_t *frame, uint16_t len
 
 int16_t dlt_698_parse(dlt_698_parser *parser, uint8_t c)
 {
+    /*解析器未创建或已 delete 时直接返回，不能解引用空的内部实例*/
+    if ((NULL == parser) || (NULL == parser->_ins))
+    {
+        return DLT_698_ERR_EMPTY_PTR;
+    }
     struct DLT_698_PRIVATE *ins_ptr = (struct DLT_698_PRIVATE *)parser->_ins;
     int16_t ret = DLT_698_ERR_PARSING;
     uint64_t now = dlt_sys_start_timestamp_ms();
@@ -436,16 +473,26 @@ int16_t dlt_698_encode(dlt_698_parser *parser, uint8_t ctrl, uint8_t *apdu_ptr, 
 /*设置帧过滤时间阈值*/
 int16_t dlt_698_set_timeout_ms(dlt_698_parser *parser, uint16_t ms)
 {
-    struct DLT_698_PRIVATE *ins_ptr = (struct DLT_698_PRIVATE *)parser->_ins;
-    if (ins_ptr)
+    if (NULL == parser)
     {
-        ins_ptr->_timeout_ms = ms;
+        return DLT_698_ERR_EMPTY_PTR;
     }
+    /*只允许设置本库实例池内的槽位，未初始化/已释放的解析器直接拒绝*/
+    struct DLT_698_PRIVATE *ins_ptr = dlt_698_parser_slot(parser->_ins);
+    if (NULL == ins_ptr)
+    {
+        return DLT_698_ERR_EMPTY_PTR;
+    }
+    ins_ptr->_timeout_ms = ms;
     return DLT_698_ERR_NONE;
 }
 /*初始化地址信息*/
 int16_t dlt_698_addr_init(dlt_698_addr_t *addr_info, const char *sa, uint8_t sa_logic, uint8_t ca)
 {
+    if ((NULL == addr_info) || (NULL == sa))
+    {
+        return DLT_698_ERR_EMPTY_PTR;
+    }
     int addr_len = strlen(sa);
     if (addr_len > 32)
     {
