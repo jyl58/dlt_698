@@ -8,7 +8,7 @@ int16_t dlt_698_parse_get_req_md5(dlt_698_parser *parser)
     ins_ptr->frame.content.req_md5 = (struct DLT_698_GET_MD5_REQ *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_GET_MD5_REQ));
     if (ins_ptr->frame.content.req_md5 == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     return dlt_698_parse_oad(ins_ptr, &ins_ptr->frame.content.req_md5->oad);
 }
@@ -20,7 +20,7 @@ int16_t dlt_698_parse_get_res_md5(dlt_698_parser *parser)
     ins_ptr->frame.content.res_md5 = (struct DLT_698_GET_MD5_RES *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_GET_MD5_RES));
     if (ins_ptr->frame.content.res_md5 == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     int16_t ret = dlt_698_parse_oad(ins_ptr, &ins_ptr->frame.content.res_md5->oad);
     if (ret != DLT_698_ERR_NONE)

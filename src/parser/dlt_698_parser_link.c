@@ -7,7 +7,7 @@ int16_t dlt_698_parse_link_req(dlt_698_parser *parser)
     ins_ptr->frame.content.req_link = (struct DLT_698_LINK_REQ *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_LINK_REQ));
     if (ins_ptr->frame.content.req_link == NULL)
     {
-        return DLT_698_ERR_OVER;
+        return DLT_698_ERR_MEM;
     }
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_LINK_REQ;
     /*帧头固定域：PIID(1)+请求类型(1)+心跳周期(2)*/
@@ -28,7 +28,7 @@ int16_t dlt_698_parse_link_res(dlt_698_parser *parser)
     ins_ptr->frame.content.res_link = (struct DLT_698_LINK_RES *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_LINK_RES));
     if (ins_ptr->frame.content.res_link == NULL)
     {
-        return DLT_698_ERR_OVER;
+        return DLT_698_ERR_MEM;
     }
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_LINK_RES;
     /*帧头固定域：PIID(1)+执行结果(1)*/

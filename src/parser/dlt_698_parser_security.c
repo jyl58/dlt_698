@@ -41,7 +41,7 @@ int16_t dlt_698_parse_security_req(dlt_698_parser *parser)
     ins_ptr->frame.req_sec = (struct DLT_698_SEC_REQ *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_SEC_REQ));
     if (ins_ptr->frame.req_sec == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_SEC_REQ;
     /*安全请求帧头至少需要 APDU类型 一个字节*/
@@ -120,7 +120,7 @@ int16_t dlt_698_parse_security_res(dlt_698_parser *parser)
     ins_ptr->frame.res_sec = (struct DLT_698_SEC_RES *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_SEC_RES));
     if (ins_ptr->frame.res_sec == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_SEC_RES;
     /*安全响应帧头至少需要 APDU类型 一个字节*/
@@ -168,7 +168,7 @@ int16_t dlt_698_parse_security_res(dlt_698_parser *parser)
         ins_ptr->frame.res_sec->verify_ptr = (struct DLT_698_VERIFY_INFO *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_VERIFY_INFO));
         if (ins_ptr->frame.res_sec->verify_ptr == NULL)
         {
-            return DLT_698_ERR_EMPTY_PTR;
+            return DLT_698_ERR_MEM;
         }
         /*验证信息类型至少需要一个字节*/
         if (dlt_698_payld_need(ins_ptr, 1) != DLT_698_ERR_NONE)

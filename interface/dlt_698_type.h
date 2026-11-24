@@ -223,7 +223,7 @@ extern "C"
         DLT_698_ERR_RESULT_PTR = -6,    ///< 结果存储异常
         DLT_698_ERR_INVALID = -7,       ///< 数据无效
         DLT_698_ERR_OVER = -8,          ///< 下标溢出
-        DLT_698_ERR_MEM = -9,           ///< 内部内存操作异常
+        DLT_698_ERR_MEM = -9,           ///< 内存池空间不足或内部内存操作异常
         DLT_698_ERR_TAKE = -10,         ///< 提取数据异常
         DLT_698_ERR_TYPE = -11,         ///< 类型错误
         DLT_698_ERR_LEN = -12,          ///< 长度错误

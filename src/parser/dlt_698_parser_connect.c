@@ -11,7 +11,7 @@ int16_t dlt_698_parse_conn_req(dlt_698_parser *parser)
     ins_ptr->frame.content.req_conn = (struct DLT_698_CONN_REQ *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_CONN_REQ));
     if (ins_ptr->frame.content.req_conn == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     uint8_t *data_ptr = ins_ptr->_payld_ptr;
     uint16_t pos = ins_ptr->_payld_index;
@@ -96,7 +96,7 @@ int16_t dlt_698_parse_conn_res(dlt_698_parser *parser)
     ins_ptr->frame.content.res_conn = (struct DLT_698_CONN_RES *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_CONN_RES));
     if (ins_ptr->frame.content.res_conn == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     uint8_t *data_ptr = ins_ptr->_payld_ptr;
     uint16_t pos = ins_ptr->_payld_index;
@@ -185,7 +185,7 @@ int16_t dlt_698_parse_conn_res(dlt_698_parser *parser)
         conn_ptr->res_info.verify.null_data = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
         if (conn_ptr->res_info.verify.null_data == NULL)
         {
-            ret = DLT_698_ERR_EMPTY_PTR;
+            ret = DLT_698_ERR_MEM;
         }
         else
         {
@@ -197,7 +197,7 @@ int16_t dlt_698_parse_conn_res(dlt_698_parser *parser)
         conn_ptr->res_info.verify.sec_data = (struct DLT_698_Security_Data *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_Security_Data));
         if (!conn_ptr->res_info.verify.sec_data)
         {
-            ret = DLT_698_ERR_OVER;
+            ret = DLT_698_ERR_MEM;
         }
         else
         {
@@ -213,7 +213,7 @@ int16_t dlt_698_parse_conn_res(dlt_698_parser *parser)
         conn_ptr->res_info.verify.rsa_pub_key = (struct DLT_698_RSA_Public_Key *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_RSA_Public_Key));
         if (!conn_ptr->res_info.verify.rsa_pub_key)
         {
-            ret = DLT_698_ERR_OVER;
+            ret = DLT_698_ERR_MEM;
         }
         else
         {
@@ -258,7 +258,7 @@ int16_t dlt_698_parse_rel_res(dlt_698_parser *parser)
     ins_ptr->frame.content.res_rel = (struct DLT_698_REL_RES *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_REL_RES));
     if (ins_ptr->frame.content.res_rel == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_REL_RES;
     /*帧头固定域：PIID(1)+执行结果(1)*/
@@ -276,7 +276,7 @@ int16_t dlt_698_parse_rel_ntf(dlt_698_parser *parser)
     ins_ptr->frame.content.rel_nty = (struct DLT_698_REL_NTF *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_REL_NTF));
     if (ins_ptr->frame.content.rel_nty == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     ins_ptr->frame.type = DLT_698_FRAME_TYPE_REL_NTY;
     if (dlt_698_payld_need(ins_ptr, 1) != DLT_698_ERR_NONE)

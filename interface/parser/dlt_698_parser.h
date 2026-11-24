@@ -183,6 +183,7 @@ bit3=1，表示此帧链路用户数据加扰码，发送时链路用户数据�
      * @return DLT_698_ERR_NONE 解出一个完整帧；
      *         DLT_698_ERR_PARSE(-5) 这 len 字节中未解出完整帧(数据不完整或帧头/帧校验不符)，
      *         该值不代表报文内容解析失败；
+     *         DLT_698_ERR_MEM(-9) 缓冲区剩余空间不足以存放解析结果(调大 buff_size)；
      *         DLT_698_ERR_EMPTY_PTR(-3) 解析器未初始化
      */
     int16_t dlt_698_parse_frame(dlt_698_parser *parser, uint8_t *frame, uint16_t len);
@@ -194,6 +195,7 @@ bit3=1，表示此帧链路用户数据加扰码，发送时链路用户数据�
      * @return DLT_698_ERR_PARSING(-1) 帧未收完(正常中间态)；
      *         DLT_698_ERR_NONE(0) 收完一帧并解析成功(已回调)；
      *         其余负值为错误帧(见 enum FDLT_698_ERR)；
+     *         DLT_698_ERR_MEM(-9) 缓冲区剩余空间不足以存放解析结果(调大 buff_size)；
      *         DLT_698_ERR_EMPTY_PTR(-3) 解析器未初始化或已释放
      */
     int16_t dlt_698_parse(dlt_698_parser *parser, uint8_t c);

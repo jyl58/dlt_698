@@ -45,7 +45,8 @@ extern "C"
      * @details 从内存池中分配wantsize大小的内存，返回地址满足 DLT_698_MEMPOOL_ALIGN 对齐
      * @param mp 内存池管理信息
      * @param wantsize 申请内存大小
-     * @return<O时见enum FDLT_698_ERR
+     * @return 成功返回对齐后的地址；池未初始化、wantsize 为 0 或剩余空间不足时返回 NULL，
+     *         调用方应返回 DLT_698_ERR_MEM(-9)，不要与空指针错误混用
      */
     void *dlt_698_mempool_alloc(dlt_698_mem_manage_t *mp, mem_size_t wantsize);
     /**

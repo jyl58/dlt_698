@@ -162,7 +162,7 @@ int16_t dlt_698_parse_arry(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
         dlt_698_data_t *node_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
         if (node_ptr == NULL)
         {
-            return DLT_698_ERR_EMPTY_PTR;
+            return DLT_698_ERR_MEM;
         }
         dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
         if (dlt_698_payld_remain(ins_ptr) < 1)
@@ -627,7 +627,7 @@ int16_t dlt_698_parse_road(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
     dlt_698_data_t *oad_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (oad_ptr== NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     uint16_t child_index = ins_ptr->_mem.alloc_mempool_size - sizeof(dlt_698_data_t);
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
@@ -647,7 +647,7 @@ int16_t dlt_698_parse_road(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
         dlt_698_data_t *node_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
         if (node_ptr == NULL)
         {
-            return DLT_698_ERR_EMPTY_PTR;
+            return DLT_698_ERR_MEM;
         }
         dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
         ret = dlt_698_parse_oad(ins_ptr, node_ptr);
@@ -805,7 +805,7 @@ int16_t dlt_698_parse_region(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *da
     dlt_698_data_t *node1_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (node1_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
     int16_t ret = dlt_698_parse_enum(ins_ptr, node1_ptr);
@@ -819,7 +819,7 @@ int16_t dlt_698_parse_region(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *da
     dlt_698_data_t *node2_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (node2_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
     if (dlt_698_payld_remain(ins_ptr) < 1)
@@ -838,7 +838,7 @@ int16_t dlt_698_parse_region(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *da
     dlt_698_data_t *node3_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (node3_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
     if (dlt_698_payld_remain(ins_ptr) < 1)
@@ -978,7 +978,7 @@ int16_t dlt_698_parse_csd(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_
     dlt_698_data_t *node_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (node_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
     switch (csd_type)
@@ -1043,7 +1043,7 @@ int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
                 dlt_698_data_t *node1_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
                 if (node1_ptr == NULL)
                 {
-                    return DLT_698_ERR_EMPTY_PTR;
+                    return DLT_698_ERR_MEM;
                 }
                 dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
                 ret = dlt_698_parse_unsigned(ins_ptr, node1_ptr);
@@ -1067,7 +1067,7 @@ int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
                 dlt_698_data_t *node1_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
                 if (node1_ptr == NULL)
                 {
-                    return DLT_698_ERR_EMPTY_PTR;
+                    return DLT_698_ERR_MEM;
                 }
                 dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
                 ret = dlt_698_parse_tsa(ins_ptr, node1_ptr);
@@ -1091,7 +1091,7 @@ int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
                 dlt_698_data_t *node1_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
                 if (node1_ptr == NULL)
                 {
-                    return DLT_698_ERR_EMPTY_PTR;
+                    return DLT_698_ERR_MEM;
                 }
                 dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
                 ret = dlt_698_parse_long_unsigned(ins_ptr, node1_ptr);
@@ -1117,7 +1117,7 @@ int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
                 dlt_698_data_t *node1_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
                 if (node1_ptr == NULL)
                 {
-                    return DLT_698_ERR_EMPTY_PTR;
+                    return DLT_698_ERR_MEM;
                 }
                 dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
                 ret = dlt_698_parse_region(ins_ptr, node1_ptr);
@@ -1151,7 +1151,7 @@ int16_t dlt_698_parse_sid(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_
     dlt_698_data_t *node1_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (!node1_ptr)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
     ret = dlt_698_parse_double_long_unsigned(ins_ptr, node1_ptr);
@@ -1164,7 +1164,7 @@ int16_t dlt_698_parse_sid(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_
     dlt_698_data_t *node2_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (!node2_ptr)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
     ret = dlt_698_parse_octet_string(ins_ptr, node2_ptr);
@@ -1195,7 +1195,7 @@ int16_t dlt_698_parse_sid_mac(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *d
     dlt_698_data_t *node1_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (!node1_ptr)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
     ret = dlt_698_parse_sid(ins_ptr, node1_ptr);
@@ -1208,7 +1208,7 @@ int16_t dlt_698_parse_sid_mac(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *d
     dlt_698_data_t *node2_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (!node2_ptr)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
     ret = dlt_698_parse_mac(ins_ptr, node2_ptr);
@@ -1270,7 +1270,7 @@ int16_t dlt_698_parse_rcsd(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
         dlt_698_data_t *node1_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
         if (node1_ptr == NULL)
         {
-            return DLT_698_ERR_EMPTY_PTR;
+            return DLT_698_ERR_MEM;
         }
         dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
         ret = dlt_698_parse_csd(ins_ptr, node1_ptr);
@@ -1392,7 +1392,7 @@ int16_t dlt_698_parse_TimeTag(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t **
     dlt_698_data_t *data_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (data_ptr== NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     *tag_ptr = data_ptr;
     data_ptr->index = ins_ptr->_payld_index;
@@ -1403,7 +1403,7 @@ int16_t dlt_698_parse_TimeTag(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t **
     dlt_698_data_t *dts = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (dts == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
     ret = dlt_698_parse_date_time_s(ins_ptr, dts);
@@ -1416,7 +1416,7 @@ int16_t dlt_698_parse_TimeTag(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t **
     dlt_698_data_t *ti = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (ti == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
     ret = dlt_698_parse_ti(ins_ptr, ti);
@@ -1441,7 +1441,7 @@ int16_t dlt_698_parse_FollowReportTag(struct DLT_698_PRIVATE *ins_ptr, dlt_698_f
     dlt_698_follow_report_t *data_ptr = (dlt_698_follow_report_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_follow_report_t));
     if (data_ptr==NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     *follow_ptr = data_ptr;
     if (dlt_698_payld_remain(ins_ptr) < 1)
@@ -1466,7 +1466,7 @@ int16_t dlt_698_parse_FollowReportTag(struct DLT_698_PRIVATE *ins_ptr, dlt_698_f
             struct DLT_698_Result_Normal *node_ptr = (struct DLT_698_Result_Normal *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_Result_Normal));
             if (node_ptr==NULL)
             {
-                return DLT_698_ERR_EMPTY_PTR;
+                return DLT_698_ERR_MEM;
             }
             DLT_698_append_next(struct DLT_698_Result_Normal, ins_ptr->_mem.start, node_father, next_index);
             int16_t ret = dlt_698_parse_result_normal(ins_ptr, node_ptr);
@@ -1488,7 +1488,7 @@ int16_t dlt_698_parse_FollowReportTag(struct DLT_698_PRIVATE *ins_ptr, dlt_698_f
             struct DLT_698_RESULT_RECORD *node_ptr = (struct DLT_698_RESULT_RECORD *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_RESULT_RECORD));
             if (node_ptr==NULL)
             {
-                return DLT_698_ERR_EMPTY_PTR;
+                return DLT_698_ERR_MEM;
             }
             DLT_698_append_next(struct DLT_698_RESULT_RECORD, ins_ptr->_mem.start, node_father, next_index);
             int16_t ret = dlt_698_parse_get_res_record_result(ins_ptr, node_ptr);
@@ -1587,7 +1587,7 @@ int16_t dlt_698_parse_get_res_record_result(struct DLT_698_PRIVATE *ins_ptr, str
             struct DLT_698_GET_RECORD_ROW *rec_row_ptr = (struct DLT_698_GET_RECORD_ROW *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_GET_RECORD_ROW));
             if (rec_row_ptr == NULL)
             {
-                return DLT_698_ERR_EMPTY_PTR;
+                return DLT_698_ERR_MEM;
             }
             DLT_698_append_next(struct DLT_698_GET_RECORD_ROW, ins_ptr->_mem.start, row_father, row_index);
 
@@ -1599,7 +1599,7 @@ int16_t dlt_698_parse_get_res_record_result(struct DLT_698_PRIVATE *ins_ptr, str
                 dlt_698_data_t *unit_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
                 if (unit_ptr == NULL)
                 {
-                    return DLT_698_ERR_EMPTY_PTR;
+                    return DLT_698_ERR_MEM;
                 }
                 // 获取数据类型
                 if (dlt_698_payld_remain(ins_ptr) < 1)
@@ -1626,7 +1626,7 @@ int16_t dlt_698_parse_rsd_sel0(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *data_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (data_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     return dlt_698_parse_null(ins_ptr, data_ptr);
@@ -1638,7 +1638,7 @@ int16_t dlt_698_parse_rsd_sel1(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *oad_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (oad_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     int16_t res = dlt_698_parse_oad(ins_ptr, oad_ptr);
@@ -1651,7 +1651,7 @@ int16_t dlt_698_parse_rsd_sel1(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *data_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (data_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     if (dlt_698_payld_remain(ins_ptr) < 1)
@@ -1670,7 +1670,7 @@ int16_t dlt_698_parse_rsd_sel2(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *oad_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (oad_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     int16_t res = dlt_698_parse_oad(ins_ptr, oad_ptr);
@@ -1685,7 +1685,7 @@ int16_t dlt_698_parse_rsd_sel2(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
         dlt_698_data_t *data_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
         if (data_ptr == NULL)
         {
-            res = DLT_698_ERR_EMPTY_PTR;
+            res = DLT_698_ERR_MEM;
             break;
         }
         dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
@@ -1718,7 +1718,7 @@ int16_t dlt_698_parse_rsd_sel3(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
         dlt_698_data_t *sel2_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
         if (sel2_ptr == NULL)
         {
-            res = DLT_698_ERR_EMPTY_PTR;
+            res = DLT_698_ERR_MEM;
             break;
         }
         sel2_ptr->index = ins_ptr->_payld_index;
@@ -1746,7 +1746,7 @@ int16_t dlt_698_parse_rsd_sel4(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *dts_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (dts_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     int16_t res = dlt_698_parse_date_time_s(ins_ptr, dts_ptr);
@@ -1759,7 +1759,7 @@ int16_t dlt_698_parse_rsd_sel4(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *ms_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (ms_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     res = dlt_698_parse_ms(ins_ptr, ms_ptr);
@@ -1777,7 +1777,7 @@ int16_t dlt_698_parse_rsd_sel6(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *dts_start_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (dts_start_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     int16_t res = dlt_698_parse_date_time_s(ins_ptr, dts_start_ptr);
@@ -1790,7 +1790,7 @@ int16_t dlt_698_parse_rsd_sel6(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *dts_end_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (dts_end_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     res = dlt_698_parse_date_time_s(ins_ptr, dts_end_ptr);
@@ -1803,7 +1803,7 @@ int16_t dlt_698_parse_rsd_sel6(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *ti_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (ti_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     res = dlt_698_parse_ti(ins_ptr, ti_ptr);
@@ -1816,7 +1816,7 @@ int16_t dlt_698_parse_rsd_sel6(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *ms_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (ms_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     res = dlt_698_parse_ms(ins_ptr, ms_ptr);
@@ -1838,7 +1838,7 @@ int16_t dlt_698_parse_rsd_sel9(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
     dlt_698_data_t *unsigned_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (unsigned_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     int16_t res = dlt_698_parse_unsigned(ins_ptr, unsigned_ptr);
@@ -1851,7 +1851,7 @@ int16_t dlt_698_parse_rsd_sel10(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t 
     dlt_698_data_t *unsigned_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (unsigned_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     int16_t res = dlt_698_parse_unsigned(ins_ptr, unsigned_ptr);
@@ -1864,7 +1864,7 @@ int16_t dlt_698_parse_rsd_sel10(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t 
     dlt_698_data_t *ms_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
     if (ms_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
     res = dlt_698_parse_ms(ins_ptr, ms_ptr);

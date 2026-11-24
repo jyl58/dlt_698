@@ -25,12 +25,12 @@ int16_t dlt_698_parse_act_req_normal(dlt_698_parser *parser)
     ins_ptr->frame.content.req_act = (struct DLT_698_ACT_NOR_REQ *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_NOR_REQ));
     if (ins_ptr->frame.content.req_act == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     ins_ptr->frame.content.req_act->act_ptr = (struct DLT_698_ACT_METHOD_PARA *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_METHOD_PARA));
     if (ins_ptr->frame.content.req_act->act_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     return dlt_698_parse_act_req_node(ins_ptr, ins_ptr->frame.content.req_act->act_ptr);
 }
@@ -40,7 +40,7 @@ int16_t dlt_698_parse_act_req_normal_list(dlt_698_parser *parser)
     ins_ptr->frame.content.req_act = (struct DLT_698_ACT_NOR_REQ *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_NOR_REQ));
     if (ins_ptr->frame.content.req_act == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     // 获取到SET GET个数
     uint8_t cnt = 0;
@@ -57,7 +57,7 @@ int16_t dlt_698_parse_act_req_normal_list(dlt_698_parser *parser)
         struct DLT_698_ACT_METHOD_PARA *unit_ptr = (struct DLT_698_ACT_METHOD_PARA *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_METHOD_PARA));
         if (unit_ptr == NULL)
         {
-            return DLT_698_ERR_EMPTY_PTR;
+            return DLT_698_ERR_MEM;
         }
         DLT_698_append_next(struct DLT_698_ACT_METHOD_PARA, ins_ptr->_mem.start, node_father, next_index);
         ret = dlt_698_parse_act_req_node(ins_ptr, unit_ptr);
@@ -111,13 +111,13 @@ int16_t dlt_698_parse_act_res_normal(dlt_698_parser *parser)
     ins_ptr->frame.content.res_act = (struct DLT_698_ACT_NOR_RES *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_NOR_RES));
     if (ins_ptr->frame.content.res_act == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     // 将结果存储区域结构化为DLT_698_ACT_NOR_RES_UNIT*形式
     ins_ptr->frame.content.res_act->result_ptr = (struct DLT_698_ACT_METHOD_RESULT *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_METHOD_RESULT));
     if (ins_ptr->frame.content.res_act->result_ptr == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     return dlt_698_parse_act_res_unit(ins_ptr, ins_ptr->frame.content.res_act->result_ptr);
 }
@@ -127,7 +127,7 @@ int16_t dlt_698_parse_act_res_normal_list(dlt_698_parser *parser)
     ins_ptr->frame.content.res_act = (struct DLT_698_ACT_NOR_RES *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_NOR_RES));
     if (ins_ptr->frame.content.res_act == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     uint8_t cnt = 0;
     int16_t ret = dlt_698_payld_read_u8(ins_ptr, &cnt);
@@ -143,7 +143,7 @@ int16_t dlt_698_parse_act_res_normal_list(dlt_698_parser *parser)
         struct DLT_698_ACT_METHOD_RESULT *unit_ptr = (struct DLT_698_ACT_METHOD_RESULT *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_METHOD_RESULT));
         if (unit_ptr == NULL)
         {
-            return DLT_698_ERR_EMPTY_PTR;
+            return DLT_698_ERR_MEM;
         }
         DLT_698_append_next(struct DLT_698_ACT_METHOD_RESULT, ins_ptr->_mem.start, node_father, next_index);
         ret = dlt_698_parse_act_res_unit(ins_ptr, unit_ptr);
@@ -193,7 +193,7 @@ int16_t dlt_698_parse_act_get_req_normal_list(dlt_698_parser *parser)
     ins_ptr->frame.content.req_act_get = (struct DLT_698_ACT_GET_REQ *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_GET_REQ));
     if (ins_ptr->frame.content.req_act_get == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     // 获取到ACT GET个数
     uint8_t cnt = 0;
@@ -210,7 +210,7 @@ int16_t dlt_698_parse_act_get_req_normal_list(dlt_698_parser *parser)
         struct DLT_698_ACT_GET_MOTHOD_PARA *unit_ptr = (struct DLT_698_ACT_GET_MOTHOD_PARA *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_GET_MOTHOD_PARA));
         if (unit_ptr == NULL)
         {
-            return DLT_698_ERR_EMPTY_PTR;
+            return DLT_698_ERR_MEM;
         }
         DLT_698_append_next(struct DLT_698_ACT_GET_MOTHOD_PARA, ins_ptr->_mem.start, node_father, next_index);
         ret = dlt_698_parse_act_get_req(ins_ptr, unit_ptr);
@@ -271,7 +271,7 @@ int16_t dlt_698_parse_act_get_res_normal_list(dlt_698_parser *parser)
     ins_ptr->frame.content.res_act_get = (struct DLT_698_ACT_GET_RES *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_GET_RES));
     if (ins_ptr->frame.content.res_act_get == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     // 获取到ACT GET个数
     uint8_t cnt = 0;
@@ -289,7 +289,7 @@ int16_t dlt_698_parse_act_get_res_normal_list(dlt_698_parser *parser)
         struct DLT_698_ACT_GET_MOTHOD_RESUlT *unit_ptr = (struct DLT_698_ACT_GET_MOTHOD_RESUlT *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_ACT_GET_MOTHOD_RESUlT));
         if (unit_ptr == NULL)
         {
-            return DLT_698_ERR_EMPTY_PTR;
+            return DLT_698_ERR_MEM;
         }
         DLT_698_append_next(struct DLT_698_ACT_GET_MOTHOD_RESUlT, ins_ptr->_mem.start, node_father, next_index);
         ret = dlt_698_parse_act_get_res(ins_ptr, unit_ptr);

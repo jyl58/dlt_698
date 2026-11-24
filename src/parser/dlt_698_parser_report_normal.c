@@ -8,7 +8,7 @@ int16_t dlt_698_parse_rep_ntf_normal_list(dlt_698_parser *parser)
     ins_ptr->frame.content.ntf_normal = (struct DLT_698_REP_NTF_NOR *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_REP_NTF_NOR));
     if (ins_ptr->frame.content.ntf_normal == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     // 获取到OAD个数
     uint8_t res_cnt = 0;
@@ -26,7 +26,7 @@ int16_t dlt_698_parse_rep_ntf_normal_list(dlt_698_parser *parser)
         struct DLT_698_Result_Normal *node_ptr = (struct DLT_698_Result_Normal *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_Result_Normal));
         if (!node_ptr)
         {
-            return DLT_698_ERR_EMPTY_PTR;
+            return DLT_698_ERR_MEM;
         }
         DLT_698_append_next(struct DLT_698_Result_Normal, ins_ptr->_mem.start, node_father, next_index);
         ret = dlt_698_parse_result_normal(ins_ptr, node_ptr);
@@ -43,7 +43,7 @@ int16_t dlt_698_parse_rep_ntf_record_list(dlt_698_parser *parser)
     ins_ptr->frame.content.ntf_record = (struct DLT_698_REP_NTF_REC *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_REP_NTF_REC));
     if (ins_ptr->frame.content.ntf_record == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     // List记录数据回复有多个数据单元
     uint8_t rec_cnt = 0;
@@ -61,7 +61,7 @@ int16_t dlt_698_parse_rep_ntf_record_list(dlt_698_parser *parser)
         struct DLT_698_RESULT_RECORD *node_ptr = (struct DLT_698_RESULT_RECORD *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_RESULT_RECORD));
         if (!node_ptr)
         {
-            return DLT_698_ERR_OVER;
+            return DLT_698_ERR_MEM;
         }
         DLT_698_append_next(struct DLT_698_RESULT_RECORD, ins_ptr->_mem.start, node_father, next_index);
         ret = dlt_698_parse_get_res_record_result(ins_ptr, node_ptr);
@@ -80,7 +80,7 @@ int16_t dlt_698_parse_rep_res_normal_list(dlt_698_parser *parser)
     ins_ptr->frame.content.res_nor_rec = (struct DLT_698_REP_RES_NOR *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_REP_RES_NOR));
     if (ins_ptr->frame.content.res_nor_rec == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     // 获取到OAD个数
     uint8_t oad_cnt = 0;
@@ -98,7 +98,7 @@ int16_t dlt_698_parse_rep_res_normal_list(dlt_698_parser *parser)
         dlt_698_data_t *node_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
         if (!node_ptr)
         {
-            return DLT_698_ERR_OVER;
+            return DLT_698_ERR_MEM;
         }
         DLT_698_append_next(dlt_698_data_t, ins_ptr->_mem.start, node_father, next_index);
         ret = dlt_698_parse_oad(ins_ptr, node_ptr);
@@ -127,7 +127,7 @@ int16_t dlt_698_parse_rep_ntf_trans(dlt_698_parser *parser)
     ins_ptr->frame.content.ntf_trans = (struct DLT_698_REP_NTF_TRANS *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(struct DLT_698_REP_NTF_TRANS));
     if (ins_ptr->frame.content.ntf_trans == NULL)
     {
-        return DLT_698_ERR_EMPTY_PTR;
+        return DLT_698_ERR_MEM;
     }
     // 获取OAD
     int16_t ret = dlt_698_parse_oad(ins_ptr, &ins_ptr->frame.content.ntf_trans->oad);
@@ -150,7 +150,7 @@ int16_t dlt_698_parse_rep_ntf_trans(dlt_698_parser *parser)
         dlt_698_data_t *node_ptr = (dlt_698_data_t *)dlt_698_mempool_alloc(&ins_ptr->_mem, sizeof(dlt_698_data_t));
         if (!node_ptr)
         {
-            return DLT_698_ERR_EMPTY_PTR;
+            return DLT_698_ERR_MEM;
         }
         DLT_698_append_next(dlt_698_data_t, ins_ptr->_mem.start, node_father, next_index);
         ret = dlt_698_parse_octet_string(ins_ptr, node_ptr);

@@ -383,10 +383,11 @@ int16_t dlt_698_handle_payload_private(dlt_698_parser *parser)
     ins_ptr->_parse_depth = 0;    // 每帧开始时复位嵌套深度
     // 数据从buf初始位置开始存储
     ins_ptr->_payld_ptr = parser->_buf;
-    /*载荷长度达到缓冲区大小时没有剩余空间存放解析结果，防止无符号回绕出巨大内存池*/
+    /*载荷长度达到缓冲区大小时没有剩余空间存放解析结果，防止无符号回绕出巨大内存池；
+     * 这属于缓冲区容量不足，返回内存错误，与帧内容/长度错误(OVER/PARSE)区分*/
     if (ins_ptr->_payld_len >= parser->_buf_size)
     {
-        return DLT_698_ERR_OVER;
+        return DLT_698_ERR_MEM;
     }
     /**
      * 引入内存动态管理数据处理方式，用来存储解析完的结果，每次解析完698帧后，对存储区的内存进行初始化，用处理新的数据
