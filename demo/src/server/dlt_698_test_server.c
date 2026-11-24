@@ -13,6 +13,7 @@
 #include "dlt_698_parser_connect_normal.h"
 #include "dlt_698_utl_tools.h"
 #include "dlt_698_utl_print.h"
+#include "dlt_698_demo_take.h"
 
 struct DLT_698_DATA_HANDLE
 {
@@ -49,6 +50,8 @@ void handle_get_req(dlt_698_parser *parser)
 void dlt_698_utl_server_handler(dlt_698_parser *parser)
 {
     dlt_698_utl_print_head(parser);
+    /* 字段提取示例: 提取帧头字段 */
+    demo_take_frame_fields(parser);
     uint8_t sect_type = DLT_698_SEC_COMMON;
     dlt_698_take_sec_type(parser, &sect_type);
     if (sect_type == DLT_698_SEC_COMMON)
@@ -69,6 +72,8 @@ void dlt_698_utl_server_handler(dlt_698_parser *parser)
     {
         handle_sec_req(parser);
     }
+    /* 字段提取示例: 提取APDU内各数据字段的值 */
+    demo_take_apdu_fields(parser);
     dlt_698_utl_print_mempool_status(parser);
 }
 void DLT_WEAK dlt_server_handle_get_normal(dlt_698_parser *parser)

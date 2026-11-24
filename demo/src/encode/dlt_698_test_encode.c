@@ -14,20 +14,6 @@
 #include "dlt_698_esam_F100.h"
 #include "dlt_698_utl_tools.h"
 
-int16_t dlt_698_init_apdu(uint8_t *apdu_ptr, uint16_t apdu_len, uint8_t piid, uint32_t oad)
-{
-    memset(apdu_ptr, 0, apdu_len);
-    int pos = 0;
-    pos += dlt_698_encode_header_get(0, DLT_698_GET_METHOD_NOR, piid, apdu_ptr + pos);
-
-    apdu_ptr[pos++] = oad >> 24;
-    apdu_ptr[pos++] = oad >> 16;
-    apdu_ptr[pos++] = oad >> 8;
-    apdu_ptr[pos++] = oad;
-
-    apdu_ptr[pos++] = 0x01;
-    return pos;
-}
 void dlt_698_encode_type(dlt_698_parser *parser)
 {
     uint8_t ctrl = DLT_698_FROM_CLIENT | DLT_698_CLIENT_LAUNCH | DLT_698_SUBFRAME_NO | DLT_698_DISTURB_NO | RM_698_FRAME_FUN_3;

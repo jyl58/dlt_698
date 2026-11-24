@@ -56,6 +56,16 @@ extern "C"
      */
     int16_t dlt_698_encode_header_get(bool req, enum DLT_698_GET_METHOD method, uint8_t piid, uint8_t *des);
     /**
+     * @brief 初始化GetRequestNormal APDU
+     * @details 组帧: Get-Request头|PIID|OAD|DataChoice(0x01)，后续数据由调用方按数据类型编码追加
+     * @param apdu_ptr APDU缓冲区指针
+     * @param apdu_len APDU缓冲区长度
+     * @param piid PIID标识
+     * @param oad OAD地址
+     * @return int16_t 返回已组帧长度，若小于0表示出错。
+     */
+    int16_t dlt_698_init_apdu(uint8_t *apdu_ptr, uint16_t apdu_len, uint8_t piid, uint32_t oad);
+    /**
      * @brief 请求设置或响应设置开始信息组帧
      * @details 组帧： 帧类型|数据类型|PIID  如：06 01 02
      * @param req 1表示请求设置，0表示响应设置

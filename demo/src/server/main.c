@@ -1,8 +1,9 @@
 /**
  * @file main.c
  * @date 2026-10-31
- * @brief DL/T 698 报文解析示例
- * @details 演示如何使用 dlt_698 解析器解析一帧完整的698报文。
+ * @brief DL/T 698 server端测试demo
+ * @details 模拟server(表计/终端)侧: 解析client发来的SET请求帧,
+ *          在回调中提取并打印帧头字段与APDU各字段。
  *          示例中直接喂入十六进制报文字节流，实际使用时可将
  *          串口/网络等通信接口收到的字节逐个送入 dlt_698_parse()。
  */
@@ -43,12 +44,13 @@ int main(int argc, char *argv[])
     int hexLen = dlt_698_string_hex(frame_string, hexArr);
     printf("frame len=%d\n", hexLen);
 
-    /* 逐字节送入解析器，解析完成后回调 dlt_698_utl_server_handler */
+    /* 逐字节送入解析器，解析完成后回调 dlt_698_utl_server_handler
+     * 注意: DLT_698_ERR_PARSING(-1)表示帧接收中的正常中间态, 不算错误 */
     for (int i = 0; i < hexLen; i++)
     {
-        if (dlt_698_parse(&dlt_698_parser_ins, hexArr[i]) < 0)
+        if (dlt_698_parse(&dlt_698_parser_ins, hexArr[i]) < DLT_698_ERR_PARSING)
         {
-            printf("parse err. \n");
+            printf("parse err at byte %d. \n", i);
         }
     }
 

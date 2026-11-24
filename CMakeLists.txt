@@ -47,22 +47,35 @@ install(FILES ${DLT_698_LICENSE_FILE} DESTINATION share/dlt_698)
 # demo
 if(DLT_698_BUILD_DEMO)
     file(GLOB_RECURSE DEMO_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/demo/src/*.c)
-    add_executable(dlt_698_demo ${CMAKE_CURRENT_SOURCE_DIR}/demo/main.c ${DEMO_SOURCES})
+    # 排除各demo入口, 入口在add_executable中单独指定
+    list(REMOVE_ITEM DEMO_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/demo/src/server/main.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/demo/src/client/main.c)
 
-    target_include_directories(dlt_698_demo PRIVATE
+    # server端测试demo: 解析client发来的请求帧
+    add_executable(dlt_698_demo_server ${CMAKE_CURRENT_SOURCE_DIR}/demo/src/server/main.c ${DEMO_SOURCES})
+
+    # client端测试demo: 组帧server返回的响应帧并解析
+    add_executable(dlt_698_demo_client ${CMAKE_CURRENT_SOURCE_DIR}/demo/src/client/main.c ${DEMO_SOURCES})
+
+    set(DEMO_INC_DIRS
         ${DLT_698_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/demo/inc
         ${CMAKE_CURRENT_SOURCE_DIR}/demo/inc/client
         ${CMAKE_CURRENT_SOURCE_DIR}/demo/inc/server
         ${CMAKE_CURRENT_SOURCE_DIR}/demo/inc/encode
     )
+    target_include_directories(dlt_698_demo_server PRIVATE ${DEMO_INC_DIRS})
+    target_include_directories(dlt_698_demo_client PRIVATE ${DEMO_INC_DIRS})
     # demo内class生成的头文件目录
     file(GLOB_RECURSE DEMO_CLASS_DIRS LIST_DIRECTORIES true ${CMAKE_CURRENT_SOURCE_DIR}/demo/inc/class/*)
     foreach(DIR ${DEMO_CLASS_DIRS})
         if(IS_DIRECTORY ${DIR})
-            target_include_directories(dlt_698_demo PRIVATE ${DIR})
+            target_include_directories(dlt_698_demo_server PRIVATE ${DIR})
+            target_include_directories(dlt_698_demo_client PRIVATE ${DIR})
         endif()
     endforeach()
 
-    target_link_libraries(dlt_698_demo PRIVATE dlt_698)
+    target_link_libraries(dlt_698_demo_server PRIVATE dlt_698)
+    target_link_libraries(dlt_698_demo_client PRIVATE dlt_698)
 endif()

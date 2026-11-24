@@ -9,15 +9,6 @@
 #define __DLT_698_UTL_ENCODE_H__
 #include "dlt_698_parser.h"
 /**
- * @brief 初始化APDU数据
- * @param apdu_ptr APDU指针
- * @param apdu_len APDU长度
- * @param piid PIID标识
- * @param oad OAD地址
- * @return int16_t 返回组帧长度，若小于0表示出错。
- */
-int16_t dlt_698_init_apdu(uint8_t *apdu_ptr, uint16_t apdu_len, uint8_t piid, uint32_t oad);
-/**
  * @brief 组帧函数组帧测试
  * @param parser 解析器指针
  * @return 返回void类型参数

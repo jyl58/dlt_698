@@ -860,3 +860,22 @@ int16_t dlt_698_encode_get_normal_req(dlt_698_parser *parser, uint8_t piid, oop_
     int16_t ret = dlt_698_encode(parser, ctrl, apdu, pos, dlt_ptr, dlt_size);
     return ret;
 }
+
+int16_t dlt_698_init_apdu(uint8_t *apdu_ptr, uint16_t apdu_len, uint8_t piid, uint32_t oad)
+{
+    if (NULL == apdu_ptr || apdu_len < 7)
+    {
+        return DLT_698_ERR_EMPTY_PTR;
+    }
+    memset(apdu_ptr, 0, apdu_len);
+    int pos = 0;
+    pos += dlt_698_encode_header_get(0, DLT_698_GET_METHOD_NOR, piid, apdu_ptr + pos);
+
+    apdu_ptr[pos++] = oad >> 24;
+    apdu_ptr[pos++] = oad >> 16;
+    apdu_ptr[pos++] = oad >> 8;
+    apdu_ptr[pos++] = oad;
+
+    apdu_ptr[pos++] = 0x01;
+    return pos;
+}
