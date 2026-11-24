@@ -157,13 +157,22 @@ static void demo_print_data_value(dlt_698_parser *parser, dlt_698_data_t *node, 
             break;
         }
         case DLT_698_TYPE_OOP_VISIBLE_STRING:
+        {
+            char buf[64] = {0};
+            uint16_t real = 0;
+            if (dlt_698_get_visible_string(parser, node, (oop_visible_string *)buf, sizeof(buf), &real))
+            {
+                printf("visible-string[%u] = %s\n", real, buf);
+            }
+            break;
+        }
         case DLT_698_TYPE_OOP_UTF8_STRING:
         {
             char buf[64] = {0};
             uint16_t real = 0;
-            if (dlt_698_get_visible_string(parser, node, buf, sizeof(buf), &real))
+            if (dlt_698_get_utf8_string(parser, node, (oop_utf8_string *)buf, sizeof(buf), &real))
             {
-                printf("string[%u] = %s\n", real, buf);
+                printf("utf8-string[%u] = %s\n", real, buf);
             }
             break;
         }

@@ -24,7 +24,7 @@ bool dlt_698_get_bool(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_bool
 bool dlt_698_get_bit_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_bit_string *bit_ptr, uint16_t bit_size, uint16_t *real_size)
 {
     bool result = false;
-    if (!parser || !data_ptr || !bit_ptr || bit_size == 0)    // 指针为空或缓冲区空间不足
+    if (!parser || !data_ptr || !bit_ptr || !real_size || bit_size == 0)    // 指针为空或缓冲区空间不足
     {
         return result;
     }
@@ -35,21 +35,21 @@ bool dlt_698_get_bit_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oo
     if (data_ptr->type == DLT_698_TYPE_OOP_BIT_STRING)
     {
         uint16_t field_len = 0;      // 长度域大小
-        uint16_t content_len = 0;    // 数据域大小
+        uint16_t content_len = 0;    // 位串位数(注意：不是字节数)
         uint16_t remain = (data_ptr->index < ins_ptr->_payld_len) ? (uint16_t)(ins_ptr->_payld_len - data_ptr->index) : 0;
         if (dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + data_ptr->index, remain, &field_len, &content_len) != DLT_698_ERR_NONE)
         {
             return false;
         }
-        if ((uint32_t)data_ptr->index + field_len + content_len > ins_ptr->_payld_len)
+        uint16_t byte_cnt = (content_len + 7) / 8;    // 位串在载荷中占用的字节数
+        if ((uint32_t)data_ptr->index + field_len + byte_cnt > ins_ptr->_payld_len)
         {
             return false;
         }
-        if (content_len < bit_size)
+        if (content_len <= bit_size)    // 位串按位存放，缓冲区刚好放下 content_len 位也算成功
         {
             result = true;
             *real_size = content_len;
-            uint16_t byte_cnt = (content_len + 7) / 8;    // 计算字节数
             for (uint16_t i = 0; i < byte_cnt; i++)
             {
                 uint8_t num = ins_ptr->_payld_ptr[data_ptr->index + field_len + i];
@@ -105,7 +105,7 @@ bool dlt_698_get_double_long_unsigned(dlt_698_parser *parser, dlt_698_data_t *da
 bool dlt_698_get_octet_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_octet_string *octet_ptr, uint16_t octet_size, uint16_t *real_size)
 {
     bool result = false;
-    if (!parser || !data_ptr || !octet_ptr || octet_size == 0)    // 指针为空或缓冲区空间不足
+    if (!parser || !data_ptr || !octet_ptr || !real_size || octet_size == 0)    // 指针为空或缓冲区空间不足
     {
         return result;
     }
@@ -126,7 +126,7 @@ bool dlt_698_get_octet_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, 
         {
             return false;
         }
-        if (content_len < octet_size)
+        if (content_len <= octet_size)    // 字节串不含结束符，缓冲区大小等于内容长度也可容纳
         {
             result = true;
             *real_size = content_len;
@@ -142,7 +142,7 @@ bool dlt_698_get_octet_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, 
 bool dlt_698_get_visible_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_visible_string *visible_ptr, uint16_t visible_size, uint16_t *real_size)
 {
     bool result = false;
-    if (!parser || !data_ptr || !visible_ptr || visible_size == 0)    // 指针为空或缓冲区空间不足
+    if (!parser || !data_ptr || !visible_ptr || !real_size || visible_size == 0)    // 指针为空或缓冲区空间不足
     {
         return result;
     }
@@ -162,7 +162,7 @@ bool dlt_698_get_visible_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr
         {
             return false;
         }
-        if (content_len < visible_size)
+        if (content_len < visible_size)    // 字符串存储区需预留 1 字节放结束符
         {
             result = true;
             *real_size = content_len;
@@ -170,6 +170,7 @@ bool dlt_698_get_visible_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr
             {
                 visible_ptr[i] = (oop_visible_string)ins_ptr->_payld_ptr[data_ptr->index + field_len + i];
             }
+            visible_ptr[content_len] = '\0';
         }
     }
     return result;
@@ -177,7 +178,7 @@ bool dlt_698_get_visible_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr
 bool dlt_698_get_utf8_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_utf8_string *utf8_ptr, uint16_t utf8_size, uint16_t *real_size)
 {
     bool result = false;
-    if (!parser || !data_ptr || !utf8_ptr || utf8_size == 0)    // 指针为空或缓冲区空间不足
+    if (!parser || !data_ptr || !utf8_ptr || !real_size || utf8_size == 0)    // 指针为空或缓冲区空间不足
     {
         return result;
     }
@@ -185,7 +186,7 @@ bool dlt_698_get_utf8_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, o
     *real_size = 0;
 
     struct DLT_698_PRIVATE *ins_ptr = (struct DLT_698_PRIVATE *)parser->_ins;
-    if (data_ptr->type == DLT_698_TYPE_OOP_OCTET_STRING)
+    if (data_ptr->type == DLT_698_TYPE_OOP_UTF8_STRING)    // UTF-8 字符串的类型是 12，不是 octet-string(9)
     {
         uint16_t field_len = 0;      // 长度域大小
         uint16_t content_len = 0;    // 数据域大小
@@ -198,14 +199,15 @@ bool dlt_698_get_utf8_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, o
         {
             return false;
         }
-        if (content_len < utf8_size)
+        if (content_len < utf8_size)    // 字符串存储区需预留 1 字节放结束符
         {
             result = true;
             *real_size = content_len;
             for (uint16_t i = 0; i < content_len; i++)
             {
-                utf8_ptr[i] = (oop_visible_string)ins_ptr->_payld_ptr[data_ptr->index + field_len + i];
+                utf8_ptr[i] = (oop_utf8_string)ins_ptr->_payld_ptr[data_ptr->index + field_len + i];
             }
+            utf8_ptr[content_len] = '\0';
         }
     }
     return result;

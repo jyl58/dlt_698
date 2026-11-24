@@ -27,11 +27,14 @@ extern "C"
     bool dlt_698_get_bool(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_bool *val_ptr);
     /**
      * @brief 解析oop_bit_string数据值
-     * @details 解析dlt_698_data_t获取具体数据
+     * @details 解析dlt_698_data_t获取具体数据。位串按位展开存放，每个元素占 1 字节(值 0/1)，
+     *          因此 bit_size 是"位数"而非字节数；内容位数 <= bit_size 即成功。
      * @param parser 解析器
      * @param data_ptr 解析数据信息
-     * @param val_ptr [out]解析数据
-     * @return 1解析成功，解析失败
+     * @param bit_ptr [out]数据存储区，至少 bit_size 个元素
+     * @param bit_size 存储区可容纳的位数
+     * @param real_size [out]实际位数
+     * @return 1解析成功，0失败(指针为空、类型不符、存储区不足或载荷越界)
      */
     bool dlt_698_get_bit_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_bit_string *bit_ptr, uint16_t bit_size, uint16_t *real_size);
     /**
@@ -54,32 +57,39 @@ extern "C"
     bool dlt_698_get_double_long_unsigned(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_double_long_unsigned *val_ptr);
     /**
      * @brief 解析oop_octet_string数据值
-     * @details 解析dlt_698_data_t获取具体数据
+     * @details 解析dlt_698_data_t获取具体数据。字节串不加结束符，
+     *          内容长度 <= octet_size 即成功(两者相等正好填满存储区)。
      * @param parser 解析器
+     * @param data_ptr 解析数据信息
      * @param octet_ptr 数据存储区指针
-     * @param octet_size 数据存储区大小
-     * @param real_size [out]实际解析数据大小
-     * @return 1解析成功，解析失败
+     * @param octet_size 数据存储区大小(字节)
+     * @param real_size [out]实际解析数据大小(字节)
+     * @return 1解析成功，0失败(指针为空、类型不符、存储区不足或载荷越界)
      */
     bool dlt_698_get_octet_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_octet_string *octet_ptr, uint16_t octet_size, uint16_t *real_size);
     /**
      * @brief 解析oop_visible_string数据值
-     * @details 解析dlt_698_data_t获取具体数据
+     * @details 解析dlt_698_data_t获取具体数据。字符串需要在末尾补 '\0'，
+     *          因此存储区需比内容至少多 1 字节：内容长度 < visible_size 才成功。
      * @param parser 解析器
+     * @param data_ptr 解析数据信息
      * @param visible_ptr 数据存储区指针
-     * @param visible_size 数据存储区大小
-     * @param real_size [out]实际解析数据大小
-     * @return 1解析成功，解析失败
+     * @param visible_size 数据存储区大小(含结束符)
+     * @param real_size [out]实际解析数据大小(不含结束符)
+     * @return 1解析成功，0失败(指针为空、类型不符、存储区不足或载荷越界)
      */
     bool dlt_698_get_visible_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_visible_string *visible_ptr, uint16_t visible_size, uint16_t *real_size);
     /**
      * @brief 解析oop_utf8_string数据值
-     * @details 解析dlt_698_data_t获取具体数据
+     * @details 解析dlt_698_data_t获取具体数据，只接受 UTF8_STRING(12) 类型节点。
+     *          字符串需要在末尾补 '\0'，因此存储区需比内容至少多 1 字节：
+     *          内容长度 < utf8_size 才成功。
      * @param parser 解析器
+     * @param data_ptr 解析数据信息
      * @param utf8_ptr 数据存储区指针
-     * @param utf8_size 数据存储区大小
-     * @param real_size [out]实际解析数据大小
-     * @return 1解析成功，解析失败
+     * @param utf8_size 数据存储区大小(含结束符)
+     * @param real_size [out]实际解析数据大小(不含结束符)
+     * @return 1解析成功，0失败(指针为空、类型不符、存储区不足或载荷越界)
      */
     bool dlt_698_get_utf8_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oop_utf8_string *utf8_ptr, uint16_t utf8_size, uint16_t *real_size);
 
