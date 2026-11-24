@@ -151,7 +151,6 @@ int16_t dlt_698_parse(dlt_698_parser *parser, uint8_t c)
                 ins_ptr->_parse_step = DLT_698_PARSE_STEP_LEN;
                 ins_ptr->_parse_index = 0;
                 ins_ptr->_ptl.len = 0;
-                memset(parser->_buf, 0, parser->_buf_size);
                 dlt_698_fcs_init(ins_ptr);
             }
             break;

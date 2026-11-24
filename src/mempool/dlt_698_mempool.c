@@ -1,6 +1,7 @@
 #include "dlt_698_mempool.h"
 #include "dlt_698_parser_private.h"
 #include <stddef.h>
+#include <string.h>
 
 /**
  * @brief 内存池分配的地址对齐粒度
@@ -70,6 +71,9 @@ void *dlt_698_mempool_alloc(dlt_698_mem_manage_t *mp, mem_size_t wantsize)
     }
     uint8_t *data = mp->start + mp->alloc_mempool_size;
     mp->alloc_mempool_size = (mem_size_t)(mp->alloc_mempool_size + need);
+    /*只清本次真正分配出去的字节：解析结果结构体被应用层当作"字段已初始化"使用，
+     * 由分配处补齐清零语义，解析器就不必每帧清整个接收缓冲(O(缓冲大小) -> O(结果大小))*/
+    memset(data, 0, (size_t)need);
 
     return data;
 }

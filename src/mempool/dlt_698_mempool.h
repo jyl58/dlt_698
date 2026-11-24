@@ -42,7 +42,8 @@ extern "C"
     int16_t dlt_698_mempool_init(dlt_698_mem_manage_t *mp, uint8_t *buf, mem_size_t total_mempool_size);
     /**
      * @brief 从内存池中申请内存
-     * @details 从内存池中分配wantsize大小的内存，返回地址满足 DLT_698_MEMPOOL_ALIGN 对齐
+     * @details 从内存池中分配wantsize大小的内存，返回地址满足 DLT_698_MEMPOOL_ALIGN 对齐；
+     *          分配出的内存已清零，调用方无需再对结果结构体做 memset
      * @param mp 内存池管理信息
      * @param wantsize 申请内存大小
      * @return 成功返回对齐后的地址；池未初始化、wantsize 为 0 或剩余空间不足时返回 NULL，
