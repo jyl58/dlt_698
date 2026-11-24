@@ -210,12 +210,15 @@ bit3=1，表示此帧链路用户数据加扰码，发送时链路用户数据�
     int16_t dlt_698_set_timeout_ms(dlt_698_parser *parser, uint16_t ms);
     /**
      * @brief 地址域初始化
-     * @details 地址域初始化
+     * @details 地址域初始化。服务器地址长度受 4bit 长度域限制：
+     *          无扩展逻辑地址(sa_logic<=1)支持 1~16 字节；
+     *          有扩展逻辑地址(sa_logic>1)支持 1~15 字节。
      * @param addr_info 地址域信息
-     * @param sa 服务器地址
+     * @param sa 服务器地址(十六进制字符串，最长32个字符=16字节)
      * @param sa_logic 逻辑地址
      * @param ca 客户机地址
-     * @return <O时见enum FDLT_698_ERR
+     * @return DLT_698_ERR_NONE 成功；
+     *         DLT_698_ERR_LEN(-12) 地址为空、超过16字节，或超过15字节却要求扩展逻辑地址
      */
     int16_t dlt_698_addr_init(dlt_698_addr_t *addr_info, const char *sa, uint8_t sa_logic, uint8_t ca);
     /**

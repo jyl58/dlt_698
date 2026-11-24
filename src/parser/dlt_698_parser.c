@@ -371,6 +371,11 @@ int16_t dlt_698_encode(dlt_698_parser *parser, uint8_t ctrl, uint8_t *apdu_ptr, 
     {
         return DLT_698_ERR_EMPTY_PTR;
     }
+    /*扩展逻辑地址下长度域按实际字节数计，0 表示没有服务器地址，不允许组帧*/
+    if ((parser->_addr.ext > 1) && (parser->_addr.sa_feature.st.sa_len == 0))
+    {
+        return DLT_698_ERR_LEN;
+    }
 
     // 数据域长度
     uint16_t data_len = apdu_len + DLT_698_FRAME_HEAD_LEN + (parser->_addr.sa_feature.st.sa_len);
@@ -456,6 +461,16 @@ int16_t dlt_698_addr_init(dlt_698_addr_t *addr_info, const char *sa, uint8_t sa_
     }
     uint8_t addr_hex[16] = {0};
     int sa_len = dlt_698_string_hex(addr_str, addr_hex);
+    /*地址长度域只有4bit：无扩展逻辑地址时表示(实际字节数-1)，可表示1~16字节；
+     *有扩展逻辑地址时表示实际字节数，可表示1~15字节。越界会被位域截断，必须提前拒绝*/
+    if (sa_len <= 0 || sa_len > 16)
+    {
+        return DLT_698_ERR_LEN;
+    }
+    if (sa_logic > 1 && sa_len > 15)
+    {
+        return DLT_698_ERR_LEN;
+    }
     addr_info->sa_feature.st.sa_type = DLT_698_ADDR_SINGLE;    ///< 单地址
     if (sa_len == 1 && addr_hex[0] == 0xAA)                    ///< 广播地址的长度固定为1字节，广播地址=AAH
     {
