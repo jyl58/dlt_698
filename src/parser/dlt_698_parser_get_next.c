@@ -34,7 +34,7 @@ int16_t dlt_698_parse_get_res_next(dlt_698_parser *parser)
     ins_ptr->frame.content.res_next->data_choice = data_choice;
     switch (data_choice)
     {
-        case 0:    // 错误信息    	   [0]   DAR，
+        case 0:    // 错误信息           [0]   DAR，
             ins_ptr->frame.content.res_next->next_data.dar = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
             break;
         case 1:    // 对象属性         [1]   SEQUENCE OF A-ResultNormal
