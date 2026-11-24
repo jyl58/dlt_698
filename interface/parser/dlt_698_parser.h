@@ -199,16 +199,22 @@ bit3=1，表示此帧链路用户数据加扰码，发送时链路用户数据�
     int16_t dlt_698_parse(dlt_698_parser *parser, uint8_t c);
     /**
      * @brief 698组帧函数
-     * @details 组帧
+     * @details 组帧。长度参数与返回值统一用 int32_t，避免 int16_t 在 32767 处截断。
+     *          本库单帧上限为 65535 字节(含4个前导符与16H，数据域相应最多 65529 字节)：
+     *          解析侧的长度入参与缓冲区下标都是 uint16_t，更长的帧本库无法回读，
+     *          因此超过上限直接返回错误，不做截断。
      * @param parser 解析器
-     * @param ctl控制码
+     * @param ctrl 控制码
      * @param apdu_ptr APDU数据
-     * @param apdu_len 数据域长度
+     * @param apdu_len APDU字节数(>0)
      * @param des_ptr 整帧存储起始指针
-     * @param des_len 存储数据长度
-     * @return <O时见enum FDLT_698_ERR
+     * @param des_len 存储区大小(字节)
+     * @return 成功返回写入的整帧字节数；
+     *         DLT_698_ERR_EMPTY_PTR(-3) 空指针或 apdu_len<=0；
+     *         DLT_698_ERR_LEN(-12) 无服务器地址却要求扩展逻辑地址；
+     *         DLT_698_ERR_OVER(-8) 整帧超过 65535 字节，或 des_len 不足
      */
-    int16_t dlt_698_encode(dlt_698_parser *parser, uint8_t ctrl, uint8_t *apdu_ptr, int16_t apdu_len, uint8_t *des_ptr, int16_t des_len);
+    int32_t dlt_698_encode(dlt_698_parser *parser, uint8_t ctrl, uint8_t *apdu_ptr, int32_t apdu_len, uint8_t *des_ptr, int32_t des_len);
     /**
      * @brief 接收数据之间的时间阈值，超过阈值重新过滤数据
      * @details 数据过滤

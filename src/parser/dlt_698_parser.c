@@ -401,7 +401,7 @@ int16_t dlt_698_handle_payload_private(dlt_698_parser *parser)
     return dlt_698_parse_entry(parser);
 }
 
-int16_t dlt_698_encode(dlt_698_parser *parser, uint8_t ctrl, uint8_t *apdu_ptr, int16_t apdu_len, uint8_t *des_ptr, int16_t des_len)
+int32_t dlt_698_encode(dlt_698_parser *parser, uint8_t ctrl, uint8_t *apdu_ptr, int32_t apdu_len, uint8_t *des_ptr, int32_t des_len)
 {
     /*检查空指针*/
     if ((NULL == parser) || (NULL == apdu_ptr) || apdu_len <= 0 || (NULL == des_ptr))
@@ -415,14 +415,20 @@ int16_t dlt_698_encode(dlt_698_parser *parser, uint8_t ctrl, uint8_t *apdu_ptr, 
     }
 
     // 数据域长度
-    uint16_t data_len = apdu_len + DLT_698_FRAME_HEAD_LEN + (parser->_addr.sa_feature.st.sa_len);
+    int32_t data_len = apdu_len + DLT_698_FRAME_HEAD_LEN + (parser->_addr.sa_feature.st.sa_len);
     ///< 整帧长度=4个前导符+数据域+2帧头帧尾
-    uint16_t dlt_len = 4 + data_len + 2;
+    int32_t dlt_len = 4 + data_len + 2;
+    /*本库单帧上限 65535 字节：解析侧的长度入参与缓冲区下标都是 uint16_t，
+     *超过这个长度组出来的帧本库自己也收不回来，因此直接报错而不是截断长度域*/
+    if (dlt_len > 0xFFFF)
+    {
+        return DLT_698_ERR_OVER;
+    }
     if (dlt_len > des_len)
     {
         return DLT_698_ERR_OVER;
     }
-    uint16_t pos = 0;
+    int32_t pos = 0;
     // 前导符
     des_ptr[pos++] = 0xFE;
     des_ptr[pos++] = 0xFE;
@@ -432,8 +438,8 @@ int16_t dlt_698_encode(dlt_698_parser *parser, uint8_t ctrl, uint8_t *apdu_ptr, 
     des_ptr[pos++] = 0x68;
     // sa_len 包含SA和一个扩展逻辑地址
     // 数据长度，小端传输
-    des_ptr[pos++] = (data_len) & 0xFF;
-    des_ptr[pos++] = (data_len >> 8) & 0xFF;
+    des_ptr[pos++] = (uint8_t)((data_len) & 0xFF);
+    des_ptr[pos++] = (uint8_t)((data_len >> 8) & 0xFF);
     // 控制域
     des_ptr[pos++] = ctrl;
     // 地址域
@@ -452,19 +458,19 @@ int16_t dlt_698_encode(dlt_698_parser *parser, uint8_t ctrl, uint8_t *apdu_ptr, 
     // 客户地址
     des_ptr[pos++] = parser->_addr.ca;
     // 帧头校验和
-    uint16_t head_check = dlt_698_fcs_16_block(des_ptr + 5, pos - 5);
+    uint16_t head_check = dlt_698_fcs_16_block(des_ptr + 5, (uint16_t)(pos - 5));
     des_ptr[pos++] = head_check & 0xFF;
     des_ptr[pos++] = (head_check >> 8) & 0xFF;
     // 数据域
     if (NULL != apdu_ptr)
     {
-        for (int i = 0; i < apdu_len; i++)
+        for (int32_t i = 0; i < apdu_len; i++)
         {
             des_ptr[pos++] = apdu_ptr[i];
         }
     }
     // 帧校验
-    uint16_t frame_check = dlt_698_fcs_16_block(des_ptr + 5, pos - 5);
+    uint16_t frame_check = dlt_698_fcs_16_block(des_ptr + 5, (uint16_t)(pos - 5));
     des_ptr[pos++] = frame_check & 0xFF;
     des_ptr[pos++] = (frame_check >> 8) & 0xFF;
     des_ptr[pos++] = 0x16;

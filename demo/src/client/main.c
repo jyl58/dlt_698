@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
         printf("encode parser init err. \n");
         return -1;
     }
-    int16_t res_len = dlt_698_encode(&enc_parser, DLT_698_FROM_SERVER | RM_698_FRAME_FUN_3,
+    int32_t res_len = dlt_698_encode(&enc_parser, DLT_698_FROM_SERVER | RM_698_FRAME_FUN_3,
                                      res_apdu, sizeof(res_apdu), res_frame, sizeof(res_frame));
     if (res_len < 0)
     {
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     printf("GET-Response frame(%d bytes):", res_len);
-    for (int16_t i = 0; i < res_len; i++)
+    for (int32_t i = 0; i < res_len; i++)
     {
         printf(" %02X", res_frame[i]);
     }

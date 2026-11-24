@@ -857,7 +857,7 @@ int16_t dlt_698_encode_get_normal_req(dlt_698_parser *parser, uint8_t piid, oop_
         }
         apdu[pos++] = 0x00;    // 无时间标签域
     }
-    int16_t ret = dlt_698_encode(parser, ctrl, apdu, pos, dlt_ptr, dlt_size);
+    int32_t ret = dlt_698_encode(parser, ctrl, apdu, pos, dlt_ptr, dlt_size);
     return ret;
 }
 
