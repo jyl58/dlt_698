@@ -89,7 +89,7 @@ int16_t dlt_698_parse_frame(dlt_698_parser *parser, uint8_t *frame, uint16_t len
             break;
         }
     }
-    // 清空状态，下一帧从头开始过滤
+    // 无论是否解出帧，返回前都清空状态：退出后实例一定停在帧头，下一帧从头开始过滤
     ins_ptr->_parse_step = DLT_698_PARSE_STEP_HEAD;
     return ret;
 }

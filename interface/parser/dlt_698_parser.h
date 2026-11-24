@@ -166,11 +166,18 @@ bit3=1，表示此帧链路用户数据加扰码，发送时链路用户数据�
     int16_t dlt_698_parser_delete(dlt_698_parser *parser);
     /**
      * @brief 698解析器整帧报文解析
-     * @details 按字节解析数据
+     * @details 按"一整帧"解析：frame 前面的杂字节会被跳过；解出一帧后立即返回，
+     *          frame 中剩余字节(如同一包内的第二帧)被丢弃。
+     *          无论解出与否，返回前都把内部状态复位到帧头，退出后实例可直接继续
+     *          逐字节喂入 dlt_698_parse()，不会残留半帧。
+     *          需要处理一包多帧或分块收数据时，请直接逐字节调用 dlt_698_parse()。
      * @param parser 解析器
      * @param frame 整帧报文缓冲区
      * @param len 整帧报文大小
-     * @return <O时见enum FDLT_698_ERR
+     * @return DLT_698_ERR_NONE 解出一个完整帧；
+     *         DLT_698_ERR_PARSE(-5) 这 len 字节中未解出完整帧(数据不完整或帧头/帧校验不符)，
+     *         该值不代表报文内容解析失败；
+     *         DLT_698_ERR_EMPTY_PTR(-3) 解析器未初始化
      */
     int16_t dlt_698_parse_frame(dlt_698_parser *parser, uint8_t *frame, uint16_t len);
     /**
