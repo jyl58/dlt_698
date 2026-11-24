@@ -36,7 +36,15 @@ bool dlt_698_get_bit_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, oo
     {
         uint16_t field_len = 0;      // 长度域大小
         uint16_t content_len = 0;    // 数据域大小
-        dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + data_ptr->index, &field_len, &content_len);
+        uint16_t remain = (data_ptr->index < ins_ptr->_payld_len) ? (uint16_t)(ins_ptr->_payld_len - data_ptr->index) : 0;
+        if (dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + data_ptr->index, remain, &field_len, &content_len) != DLT_698_ERR_NONE)
+        {
+            return false;
+        }
+        if ((uint32_t)data_ptr->index + field_len + content_len > ins_ptr->_payld_len)
+        {
+            return false;
+        }
         if (content_len < bit_size)
         {
             result = true;
@@ -109,7 +117,15 @@ bool dlt_698_get_octet_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, 
     {
         uint16_t field_len = 0;      // 长度域大小
         uint16_t content_len = 0;    // 数据域大小
-        dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + data_ptr->index, &field_len, &content_len);
+        uint16_t remain = (data_ptr->index < ins_ptr->_payld_len) ? (uint16_t)(ins_ptr->_payld_len - data_ptr->index) : 0;
+        if (dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + data_ptr->index, remain, &field_len, &content_len) != DLT_698_ERR_NONE)
+        {
+            return false;
+        }
+        if ((uint32_t)data_ptr->index + field_len + content_len > ins_ptr->_payld_len)
+        {
+            return false;
+        }
         if (content_len < octet_size)
         {
             result = true;
@@ -137,7 +153,15 @@ bool dlt_698_get_visible_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr
     {
         uint16_t field_len = 0;      // 长度域大小
         uint16_t content_len = 0;    // 数据域大小
-        dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + data_ptr->index, &field_len, &content_len);
+        uint16_t remain = (data_ptr->index < ins_ptr->_payld_len) ? (uint16_t)(ins_ptr->_payld_len - data_ptr->index) : 0;
+        if (dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + data_ptr->index, remain, &field_len, &content_len) != DLT_698_ERR_NONE)
+        {
+            return false;
+        }
+        if ((uint32_t)data_ptr->index + field_len + content_len > ins_ptr->_payld_len)
+        {
+            return false;
+        }
         if (content_len < visible_size)
         {
             result = true;
@@ -165,7 +189,15 @@ bool dlt_698_get_utf8_string(dlt_698_parser *parser, dlt_698_data_t *data_ptr, o
     {
         uint16_t field_len = 0;      // 长度域大小
         uint16_t content_len = 0;    // 数据域大小
-        dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + data_ptr->index, &field_len, &content_len);
+        uint16_t remain = (data_ptr->index < ins_ptr->_payld_len) ? (uint16_t)(ins_ptr->_payld_len - data_ptr->index) : 0;
+        if (dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + data_ptr->index, remain, &field_len, &content_len) != DLT_698_ERR_NONE)
+        {
+            return false;
+        }
+        if ((uint32_t)data_ptr->index + field_len + content_len > ins_ptr->_payld_len)
+        {
+            return false;
+        }
         if (content_len < utf8_size)
         {
             result = true;

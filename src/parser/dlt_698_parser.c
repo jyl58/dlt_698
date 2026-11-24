@@ -306,6 +306,10 @@ int16_t dlt_698_parse_entry(dlt_698_parser *parser)
     {
         return DLT_698_ERR_OVER;
     }
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t method_key = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     int i = 0;
     for (i = 0; i < (sizeof(dlt_698_top_method_tab)) / (sizeof(dlt_698_top_method_tab[0])); i++)

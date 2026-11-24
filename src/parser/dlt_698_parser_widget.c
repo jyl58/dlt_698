@@ -150,6 +150,10 @@ int16_t dlt_698_parse_arry(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
     data_ptr->type = DLT_698_TYPE_OOP_ARRAY;
     data_ptr->child_index = 0;
     data_ptr->next_index = 0;
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint16_t arry_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     // 挨着解析每个数组元素，
     for (int i = 0; i < arry_cnt; i++)
@@ -161,6 +165,10 @@ int16_t dlt_698_parse_arry(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
             return DLT_698_ERR_EMPTY_PTR;
         }
         dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
+        if (dlt_698_payld_remain(ins_ptr) < 1)
+        {
+            return DLT_698_ERR_OVER;
+        }
         uint8_t data_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
         int16_t ret = dlt_698_parse_data(ins_ptr, data_type, node_ptr);
         if (ret != DLT_698_ERR_NONE)
@@ -181,6 +189,10 @@ int16_t dlt_698_parse_bool(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
 {
     data_ptr->type = DLT_698_TYPE_OOP_BOOL;
     data_ptr->index = ins_ptr->_payld_index;
+    if (sizeof(oop_bool) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_bool);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -194,8 +206,16 @@ int16_t dlt_698_parse_bit_string(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t
     data_ptr->index = ins_ptr->_payld_index;
     uint16_t field_len = 0;
     uint16_t content_len = 0;
-    dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + ins_ptr->_payld_index, &field_len, &content_len);
-    int byte_len = field_len + (content_len + 7) / 8;
+    int16_t ret = dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + ins_ptr->_payld_index, dlt_698_payld_remain(ins_ptr), &field_len, &content_len);
+    if (ret != DLT_698_ERR_NONE)
+    {
+        return ret;
+    }
+    uint16_t byte_len = (uint16_t)(field_len + (content_len + 7) / 8);
+    if (byte_len > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += byte_len;
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -207,6 +227,10 @@ int16_t dlt_698_parse_double_long(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_DOUBLE_LONG;
+    if (sizeof(oop_double_long) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_double_long);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -218,6 +242,10 @@ int16_t dlt_698_parse_double_long_unsigned(struct DLT_698_PRIVATE *ins_ptr, dlt_
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_DOUBLE_LONG_UNSIGNED;
+    if (sizeof(oop_double_long_unsigned) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_double_long_unsigned);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -234,8 +262,16 @@ int16_t dlt_698_parse_octet_string(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data
     data_ptr->type = DLT_698_TYPE_OOP_OCTET_STRING;
     uint16_t field_len = 0;
     uint16_t content_len = 0;
-    dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + ins_ptr->_payld_index, &field_len, &content_len);
-    uint16_t data_len = field_len + content_len;
+    int16_t ret = dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + ins_ptr->_payld_index, dlt_698_payld_remain(ins_ptr), &field_len, &content_len);
+    if (ret != DLT_698_ERR_NONE)
+    {
+        return ret;
+    }
+    uint16_t data_len = (uint16_t)(field_len + content_len);
+    if (data_len > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += data_len;
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -252,8 +288,16 @@ int16_t dlt_698_parse_visible_string(struct DLT_698_PRIVATE *ins_ptr, dlt_698_da
     data_ptr->type = DLT_698_TYPE_OOP_VISIBLE_STRING;
     uint16_t field_len = 0;
     uint16_t content_len = 0;
-    dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + ins_ptr->_payld_index, &field_len, &content_len);
-    uint16_t data_len = field_len + content_len;
+    int16_t ret = dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + ins_ptr->_payld_index, dlt_698_payld_remain(ins_ptr), &field_len, &content_len);
+    if (ret != DLT_698_ERR_NONE)
+    {
+        return ret;
+    }
+    uint16_t data_len = (uint16_t)(field_len + content_len);
+    if (data_len > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += data_len;
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -270,8 +314,16 @@ int16_t dlt_698_parse_octet_utf8_string(struct DLT_698_PRIVATE *ins_ptr, dlt_698
     data_ptr->type = DLT_698_TYPE_OOP_UTF8_STRING;
     uint16_t field_len = 0;
     uint16_t content_len = 0;
-    dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + ins_ptr->_payld_index, &field_len, &content_len);
-    uint16_t data_len = field_len + content_len;
+    int16_t ret = dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + ins_ptr->_payld_index, dlt_698_payld_remain(ins_ptr), &field_len, &content_len);
+    if (ret != DLT_698_ERR_NONE)
+    {
+        return ret;
+    }
+    uint16_t data_len = (uint16_t)(field_len + content_len);
+    if (data_len > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += data_len;
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -283,6 +335,10 @@ int16_t dlt_698_parse_integer(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *d
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_INTEGER;
+    if (sizeof(oop_integer) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_integer);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -294,6 +350,10 @@ int16_t dlt_698_parse_long(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_LONG;
+    if (sizeof(oop_long) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_long);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -305,6 +365,10 @@ int16_t dlt_698_parse_unsigned(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_UNSIGNED;
+    if (sizeof(oop_unsigned) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_unsigned);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -318,6 +382,10 @@ int16_t dlt_698_parse_long_unsigned(struct DLT_698_PRIVATE *ins_ptr, dlt_698_dat
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_LONG_UNSIGNED;
+    if (sizeof(oop_long_unsigned) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_long_unsigned);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -329,6 +397,10 @@ int16_t dlt_698_parse_long64(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *da
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_LONG64;
+    if (sizeof(oop_long64) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_long64);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -340,6 +412,10 @@ int16_t dlt_698_parse_long64_unsigned(struct DLT_698_PRIVATE *ins_ptr, dlt_698_d
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_LONG64_UNSIGNED;
+    if (sizeof(oop_long64_unsigned) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_long64_unsigned);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -353,6 +429,10 @@ int16_t dlt_698_parse_enum(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_ENUM;
+    if (sizeof(oop_enum) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_enum);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -364,6 +444,10 @@ int16_t dlt_698_parse_float32(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *d
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_FLOAT32;
+    if (sizeof(oop_float32) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_float32);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -375,6 +459,10 @@ int16_t dlt_698_parse_float64(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *d
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_FLOAT64;
+    if (sizeof(oop_float64) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_float64);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -401,6 +489,10 @@ int16_t dlt_698_parse_date_time(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t 
     // date_time占10个字节
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_DATE_TIME;
+    if (sizeof(oop_date_time) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_date_time);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -421,6 +513,10 @@ int16_t dlt_698_parse_date(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
     // time占5个字节
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_DATE;
+    if (sizeof(oop_date) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_date);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -440,6 +536,10 @@ int16_t dlt_698_parse_time(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
     // time占3个字节
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_TIME;
+    if (sizeof(oop_time) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_time);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -462,6 +562,10 @@ int16_t dlt_698_parse_date_time_s(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_
     // date_time_s占7个字节
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_DATE_TIME_S;
+    if (sizeof(oop_date_time_s) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_date_time_s);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -475,6 +579,10 @@ int16_t dlt_698_parse_oi(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_OI;
+    if (sizeof(oop_oi) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_oi);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -493,6 +601,10 @@ int16_t dlt_698_parse_oad(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_OAD;
+    if (sizeof(oop_oad) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_oad);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -523,6 +635,10 @@ int16_t dlt_698_parse_road(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
     if (ret != DLT_698_ERR_NONE)
     {
         return ret;
+    }
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
     }
     uint8_t oad_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     for (int i = 0; i < oad_cnt; i++)
@@ -557,6 +673,10 @@ int16_t dlt_698_parse_omd(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_
     // OI
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_OMD;
+    if (sizeof(oop_omd) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_omd);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -583,6 +703,10 @@ int16_t dlt_698_parse_ti(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
     // TI数据结构相对简单，不在分开处理[单位，间隔值]
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_TI;
+    if (sizeof(oop_ti) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_ti);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -596,7 +720,15 @@ int16_t dlt_698_parse_tsa(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_TSA;
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t tsa_len = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
+    if (dlt_698_payld_remain(ins_ptr) < tsa_len)
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += tsa_len;
     data_ptr->child_index = 0;
     data_ptr->next_index = 0;
@@ -612,7 +744,15 @@ int16_t dlt_698_parse_mac(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_
     data_ptr->type = DLT_698_TYPE_OOP_MAC;
     data_ptr->child_index = 0;
     data_ptr->next_index = 0;
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t len = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
+    if (dlt_698_payld_remain(ins_ptr) < len)
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += len;
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     return DLT_698_ERR_NONE;
@@ -625,7 +765,15 @@ int16_t dlt_698_parse_rn(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
     // RN数据结构相对简单，不在分开处理
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_RN;
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t data_len = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
+    if (dlt_698_payld_remain(ins_ptr) < data_len)
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += data_len;
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -674,6 +822,10 @@ int16_t dlt_698_parse_region(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *da
         return DLT_698_ERR_EMPTY_PTR;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t data_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     ret = dlt_698_parse_data(ins_ptr, data_type, node2_ptr);
     if (ret != DLT_698_ERR_NONE)
@@ -689,6 +841,10 @@ int16_t dlt_698_parse_region(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *da
         return DLT_698_ERR_EMPTY_PTR;
     }
     dlt_698_append_childNode(ins_ptr, data_ptr, child_index);
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t data_type2 = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     ret = dlt_698_parse_data(ins_ptr, data_type2, node3_ptr);
     if (ret != DLT_698_ERR_NONE)
@@ -709,6 +865,10 @@ int16_t dlt_698_parse_scaler_unit(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_SCALER_UNIT;
+    if (sizeof(oop_scaler_unit) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_scaler_unit);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -722,6 +882,10 @@ int16_t dlt_698_parse_rsd(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_
     data_ptr->type = DLT_698_TYPE_OOP_RSD;
     data_ptr->child_index = 0;
     data_ptr->next_index = 0;
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t selector = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     int16_t res = DLT_698_ERR_NONE;
     switch (selector)
@@ -802,6 +966,10 @@ int16_t dlt_698_parse_csd(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_CSD;
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t csd_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     data_ptr->child_index = 0;
     data_ptr->next_index = 0;
@@ -845,6 +1013,10 @@ int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
     // MS 数据项内容
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_MS;
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t ms_item_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     switch (ms_item_type)
     {
@@ -854,6 +1026,10 @@ int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
             break;
         case 2:    // SEQUENCE OF unsigned
         {
+            if (dlt_698_payld_remain(ins_ptr) < 1)
+            {
+                return DLT_698_ERR_OVER;
+            }
             uint8_t u8_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
             for (int i = 0; i < u8_cnt; i++)
             {
@@ -870,6 +1046,10 @@ int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
         break;
         case 3:    // SEQUENCE OF TSA；TSA序列，需要包括一个长度
         {
+            if (dlt_698_payld_remain(ins_ptr) < 1)
+            {
+                return DLT_698_ERR_OVER;
+            }
             uint8_t tas_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
             for (int i = 0; i < tas_cnt; i++)
             {
@@ -886,6 +1066,10 @@ int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
         break;
         case 4:    // SEQUENCE OF long-unsigned
         {
+            if (dlt_698_payld_remain(ins_ptr) < 1)
+            {
+                return DLT_698_ERR_OVER;
+            }
             uint8_t u16_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
             for (int i = 0; i < u16_cnt; i++)
             {
@@ -904,6 +1088,10 @@ int16_t dlt_698_parse_ms(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
         case 6:    // SEQUENCE OF Region,
         case 7:    // SEQUENCE OF Region,
         {
+            if (dlt_698_payld_remain(ins_ptr) < 1)
+            {
+                return DLT_698_ERR_OVER;
+            }
             uint8_t region_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
             for (int i = 0; i < region_cnt; i++)
             {
@@ -1011,6 +1199,10 @@ int16_t dlt_698_parse_comdcb(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *da
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = DLT_698_TYPE_OOP_COMDCB;
+    if (sizeof(oop_comdcb) > dlt_698_payld_remain(ins_ptr))
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index += sizeof(oop_comdcb);
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -1026,6 +1218,10 @@ int16_t dlt_698_parse_rcsd(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
     data_ptr->type = DLT_698_TYPE_OOP_RCSD;
     data_ptr->child_index = 0;
     data_ptr->next_index = 0;
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t csd_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     for (int i = 0; i < csd_cnt; i++)
     {
@@ -1043,35 +1239,40 @@ int16_t dlt_698_parse_rcsd(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data
     return DLT_698_ERR_NONE;
 }
 
-void dlt_698_parse_axdr_len(uint8_t *pData, uint16_t *pFieldLen, uint16_t *pContentLen)
+int16_t dlt_698_parse_axdr_len(const uint8_t *pData, uint16_t remain, uint16_t *pFieldLen, uint16_t *pContentLen)
 {
-    int pos = 0;
-    uint8_t first_byte = pData[pos++];
-
+    uint16_t pos = 0;
     *pFieldLen = 0;
     *pContentLen = 0;
+    if (pData == NULL || remain < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
+    uint8_t first_byte = pData[pos++];
     if (first_byte & 0x80)    // 长度不固定  有长度域
     {
-        // 长度域字节个数，协议规定最多0x82即2字节，超出按非法处理，防止越界读取最多127字节
-        *pFieldLen = (first_byte & 0x7F);
-        if (*pFieldLen > 2)
+        // 长度域字节个数，协议规定最多0x82即2字节，超出按非法处理
+        uint16_t len_bytes = (uint16_t)(first_byte & 0x7F);
+        if (len_bytes > 2)
         {
-            *pFieldLen = 0;
-            *pContentLen = 0;
-            return;
+            return DLT_698_ERR_PARSE;
         }
-        // 数据域长度
-        for (int i = 1; i <= *pFieldLen; i++)
+        if ((uint16_t)(len_bytes + 1) > remain)    // 长度域本身超出载荷
         {
-            *pContentLen *= 256;
-            *pContentLen += pData[pos++];
+            return DLT_698_ERR_OVER;
         }
+        for (uint16_t i = 0; i < len_bytes; i++)
+        {
+            *pContentLen = (uint16_t)((*pContentLen << 8) | pData[pos++]);
+        }
+        *pFieldLen = (uint16_t)(len_bytes + 1);
     }
     else    // 长度固定  第一个字节就是长度
     {
         *pContentLen = first_byte;
+        *pFieldLen = 1;
     }
-    *pFieldLen += 1;
+    return DLT_698_ERR_NONE;
 }
 /**
  * DAR∷=ENUMERATED
@@ -1119,6 +1320,10 @@ int16_t dlt_698_parse_dr(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
 {
     data_ptr->index = ins_ptr->_payld_index;
     data_ptr->type = 0;
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     ins_ptr->_payld_index++;
     data_ptr->len = ins_ptr->_payld_index - data_ptr->index;
     data_ptr->child_index = 0;
@@ -1128,6 +1333,10 @@ int16_t dlt_698_parse_dr(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_p
 int16_t dlt_698_parse_TimeTag(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t **tag_ptr)
 {
 
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t timeTagOptional = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     if (timeTagOptional == 0)    // 无时间标签
     {
@@ -1166,6 +1375,10 @@ int16_t dlt_698_parse_TimeTag(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t **
 }
 int16_t dlt_698_parse_FollowReportTag(struct DLT_698_PRIVATE *ins_ptr, dlt_698_follow_report_t **follow_ptr)
 {
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t timeTagOptional = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     if (timeTagOptional == 0)    // 无跟随上报域
     {
@@ -1177,7 +1390,15 @@ int16_t dlt_698_parse_FollowReportTag(struct DLT_698_PRIVATE *ins_ptr, dlt_698_f
         return DLT_698_ERR_EMPTY_PTR;
     }
     *follow_ptr = data_ptr;
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     data_ptr->follow_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     int cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     data_ptr->data.normal_ptr = NULL;
     if (data_ptr->follow_type == 1)
@@ -1237,14 +1458,26 @@ int16_t dlt_698_parse_result_normal(struct DLT_698_PRIVATE *ins_ptr, struct DLT_
 }
 int16_t dlt_698_parse_get_result(struct DLT_698_PRIVATE *ins_ptr, struct DLT_698_Get_Result *get_result)
 {
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t result = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     uint8_t data_type = 0;
     if (result == 0)
     {
+        if (dlt_698_payld_remain(ins_ptr) < 1)
+        {
+            return DLT_698_ERR_OVER;
+        }
         get_result->dar = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     }
     else
     {
+        if (dlt_698_payld_remain(ins_ptr) < 1)
+        {
+            return DLT_698_ERR_OVER;
+        }
         data_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     }
     return dlt_698_parse_data(ins_ptr, data_type, &get_result->result_data);
@@ -1269,15 +1502,27 @@ int16_t dlt_698_parse_get_res_record_result(struct DLT_698_PRIVATE *ins_ptr, str
     }
     /*解析响应数据*/
     // 数据有效性检查
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t choice = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     data_ptr->record.row_ptr = NULL;
     if (0 == choice)
     {
+        if (dlt_698_payld_remain(ins_ptr) < 1)
+        {
+            return DLT_698_ERR_OVER;
+        }
         data_ptr->record.dar = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     }
     else
     {
         // 记录行数
+        if (dlt_698_payld_remain(ins_ptr) < 1)
+        {
+            return DLT_698_ERR_OVER;
+        }
         uint8_t row_cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
         data_ptr->record.row_ptr = NULL;
         struct DLT_698_GET_RECORD_ROW **row_father = &data_ptr->record.row_ptr;
@@ -1303,6 +1548,10 @@ int16_t dlt_698_parse_get_res_record_result(struct DLT_698_PRIVATE *ins_ptr, str
                     return DLT_698_ERR_EMPTY_PTR;
                 }
                 // 获取数据类型
+                if (dlt_698_payld_remain(ins_ptr) < 1)
+                {
+                    return DLT_698_ERR_OVER;
+                }
                 uint8_t data_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
                 DLT_698_append_next(dlt_698_data_t, ins_ptr->_mem.start, node_father, next_index);
                 // 解析数据占用长度
@@ -1351,6 +1600,10 @@ int16_t dlt_698_parse_rsd_sel1(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
         return DLT_698_ERR_EMPTY_PTR;
     }
     dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t data_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     res = dlt_698_parse_data(ins_ptr, data_type, data_ptr);
     return res;
@@ -1383,6 +1636,10 @@ int16_t dlt_698_parse_rsd_sel2(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
         }
         dlt_698_append_childNode(ins_ptr, rsd_ptr, child_index);
 
+        if (dlt_698_payld_remain(ins_ptr) < 1)
+        {
+            return DLT_698_ERR_OVER;
+        }
         uint8_t data_type = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
         res = dlt_698_parse_data(ins_ptr, data_type, data_ptr);
         if (res != DLT_698_ERR_NONE)
@@ -1394,6 +1651,10 @@ int16_t dlt_698_parse_rsd_sel2(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *
 }
 int16_t dlt_698_parse_rsd_sel3(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *rsd_ptr)
 {
+    if (dlt_698_payld_remain(ins_ptr) < 1)
+    {
+        return DLT_698_ERR_OVER;
+    }
     uint8_t cnt = ins_ptr->_payld_ptr[ins_ptr->_payld_index++];
     int16_t res = DLT_698_ERR_NONE;
     for (int i = 0; i < cnt; i++)

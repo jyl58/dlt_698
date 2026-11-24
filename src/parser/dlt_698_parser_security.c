@@ -78,8 +78,14 @@ int16_t dlt_698_parse_security_req(dlt_698_parser *parser)
     {
         uint16_t field_len = 0;
         uint16_t content_len = 0;
-        dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + ins_ptr->frame.req_sec->apdu_data.index, &field_len, &content_len);
-        ins_ptr->_payld_index = ins_ptr->frame.req_sec->apdu_data.index + field_len;
+        uint16_t axdr_index = ins_ptr->frame.req_sec->apdu_data.index;
+        uint16_t remain = (axdr_index < ins_ptr->_payld_len) ? (uint16_t)(ins_ptr->_payld_len - axdr_index) : 0;
+        ret = dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + axdr_index, remain, &field_len, &content_len);
+        if (ret != DLT_698_ERR_NONE || (uint32_t)axdr_index + field_len + content_len > ins_ptr->_payld_len)
+        {
+            return DLT_698_ERR_OVER;
+        }
+        ins_ptr->_payld_index = (uint16_t)(axdr_index + field_len);
         ret = dlt_698_parse_entry(parser);
     }
 
@@ -156,8 +162,14 @@ int16_t dlt_698_parse_security_res(dlt_698_parser *parser)
     {
         uint16_t field_len = 0;
         uint16_t content_len = 0;
-        dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + ins_ptr->frame.res_sec->apdu.apdu_data.index, &field_len, &content_len);
-        ins_ptr->_payld_index = ins_ptr->frame.res_sec->apdu.apdu_data.index + field_len;
+        uint16_t axdr_index = ins_ptr->frame.res_sec->apdu.apdu_data.index;
+        uint16_t remain = (axdr_index < ins_ptr->_payld_len) ? (uint16_t)(ins_ptr->_payld_len - axdr_index) : 0;
+        ret = dlt_698_parse_axdr_len(ins_ptr->_payld_ptr + axdr_index, remain, &field_len, &content_len);
+        if (ret != DLT_698_ERR_NONE || (uint32_t)axdr_index + field_len + content_len > ins_ptr->_payld_len)
+        {
+            return DLT_698_ERR_OVER;
+        }
+        ins_ptr->_payld_index = (uint16_t)(axdr_index + field_len);
         ret = dlt_698_parse_entry(parser);
     }
     return ret;

@@ -111,7 +111,7 @@ extern "C"
     int16_t dlt_698_parse_rcsd(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_ptr);
 
     /**解析可变长度 */
-    void dlt_698_parse_axdr_len(uint8_t *pData, uint16_t *pFieldLen, uint16_t *pContentLen);
+    int16_t dlt_698_parse_axdr_len(const uint8_t *pData, uint16_t remain, uint16_t *pFieldLen, uint16_t *pContentLen);
     /**解析DR数据结构 */
     int16_t dlt_698_parse_dr(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_ptr);
     /**解析时间标签域TimeTag数据结构 */

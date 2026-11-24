@@ -156,6 +156,15 @@ extern "C"
         dlt_698_mem_manage_t _mem;
     };
 
+    /* 返回载荷中尚未解析的字节数，索引越界时返回0 */
+    static inline uint16_t dlt_698_payld_remain(const struct DLT_698_PRIVATE *ins_ptr)
+    {
+        if (ins_ptr->_payld_index >= ins_ptr->_payld_len)
+        {
+            return 0;
+        }
+        return (uint16_t)(ins_ptr->_payld_len - ins_ptr->_payld_index);
+    }
     int16_t dlt_698_parse_entry(dlt_698_parser *parser);
 
 #pragma pack()
