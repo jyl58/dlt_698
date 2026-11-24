@@ -122,7 +122,7 @@ extern "C"
     /**解析RCSD数据结构 */
     int16_t dlt_698_parse_rcsd(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_ptr);
 
-    /**解析可变长度 */
+    /**解析可变长度：0x00~0x7F 为直接长度，0x81/0x82 带长度域；0x80(不定长)非法，返回 PARSE */
     int16_t dlt_698_parse_axdr_len(const uint8_t *pData, uint16_t remain, uint16_t *pFieldLen, uint16_t *pContentLen);
     /**解析DR数据结构 */
     int16_t dlt_698_parse_dr(struct DLT_698_PRIVATE *ins_ptr, dlt_698_data_t *data_ptr);

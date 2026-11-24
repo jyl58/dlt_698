@@ -1294,6 +1294,12 @@ int16_t dlt_698_parse_axdr_len(const uint8_t *pData, uint16_t remain, uint16_t *
         return DLT_698_ERR_OVER;
     }
     uint8_t first_byte = pData[pos++];
+    /*0x80 是 A-XDR 的不定长标记，DL/T 698 不使用。此前被当成"长度域1字节、内容0字节"悄悄接受，
+     * 会让后续域整体错位(如 TimeTag 读到别处)，这里按非法长度编码拒绝*/
+    if (first_byte == 0x80)
+    {
+        return DLT_698_ERR_PARSE;
+    }
     if (first_byte & 0x80)    // 长度不固定  有长度域
     {
         // 长度域字节个数，协议规定最多0x82即2字节，超出按非法处理
