@@ -94,7 +94,8 @@ int dlt_698_get_common_sibling_cnt(dlt_698_parser *parser, void *data_ptr, uint1
     while (data_ptr)
     {
         cnt++;
-        uint16_t next_index = *(uint16_t *)(data_ptr + offset);
+        uint16_t next_index; /* memcpy 读取: 节点来自内存池, 成员可能落在非对齐地址, 直接解引用是未定义行为 */
+        memcpy(&next_index, (const uint8_t *)data_ptr + offset, sizeof(next_index));
         if (next_index > 0)
         {
             data_ptr = dlt_698_get_next_ptr(parser, next_index);
